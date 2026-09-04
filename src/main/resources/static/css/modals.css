@@ -296,18 +296,44 @@ kbd {
 /* ── Mobile Modal Responsive Rules ── */
 @media (max-width: 640px) {
   .modal-overlay {
-    padding: 10px;
+    padding: 0;
     align-items: flex-end;
   }
   .deal-modal-content,
   .quote-modal-content {
     padding: 18px 14px;
-    max-height: 88vh;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-height: 90dvh;
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-width: 100%;
   }
-  .deal-modal-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
+  .deal-modal-grid,
+  [style*="grid-template-columns: 1fr 1fr"],
+  [style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+  .notif-panel {
+    position: fixed !important;
+    top: 58px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    z-index: 600;
+  }
+  .toast-stack {
+    position: fixed;
+    bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom, 0px) + 14px);
+    left: 12px;
+    right: 12px;
+    align-items: center;
+    z-index: 700;
+  }
+  .toast {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
   }
   .quote-paper {
     padding: 14px 10px;
@@ -322,6 +348,19 @@ kbd {
   }
   .quote-total-row {
     width: 100%;
+  }
+  .signature-canvas {
+    max-width: 100%;
+    height: 90px;
+  }
+  .quote-modal-content > div:last-child {
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+  }
+  .quote-modal-content > div:last-child button,
+  .quote-modal-content > div:last-child div {
+    width: 100% !important;
   }
   .shortcuts-grid {
     grid-template-columns: 1fr;

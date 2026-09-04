@@ -96,11 +96,85 @@
   .pipeline-header {
     align-items: stretch;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .pipeline-header h1 {
+    font-size: 20px;
+  }
+  .pipeline-header .header-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+  .pipeline-header .select-sort {
+    min-width: 0;
+    flex: 1;
+    font-size: 11.5px;
+    height: 36px;
+  }
+  .pipeline-header .filter-group {
+    height: 36px;
+    display: flex;
+    flex-shrink: 0;
+  }
+  .pipeline-header .filter-btn {
+    padding: 6px 12px;
+    font-size: 11.5px;
   }
 
-  .pipeline-header .header-actions {
-    justify-content: flex-start;
+  .pipeline-board {
+    display: flex !important;
+    overflow-x: auto !important;
+    gap: 12px;
+    padding-bottom: 14px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+  .stage {
+    min-width: 82vw !important;
+    width: 82vw !important;
+    max-width: 85vw !important;
+    flex-shrink: 0 !important;
+    scroll-snap-align: center;
+    padding: 12px;
+    border-radius: 12px;
+    min-height: auto;
+  }
+  .stage-header {
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+  .lead {
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .lead-title strong {
+    font-size: 13.5px;
+  }
+  .lead-next-step {
+    font-size: 10.5px;
+    padding: 4px 6px;
+  }
+
+  .deal-stepper-wrap {
+    margin: 12px 0;
+    gap: 4px;
+  }
+  .deal-stepper-node {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+  .deal-stepper-label {
+    font-size: 8.5px;
+    max-width: 60px;
+    text-align: center;
   }
 }
 

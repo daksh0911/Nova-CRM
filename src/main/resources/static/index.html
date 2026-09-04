@@ -3,12 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>NovaCRM — Modern Sales Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/app.css?v=6.0">
+  <link rel="stylesheet" href="css/app.css?v=7.0">
 </head>
 
 <body>
@@ -99,9 +99,10 @@
     <div class="main-wrapper">
       <!-- Top Bar -->
       <header class="topbar">
-        <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Toggle navigation menu">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
         </button>
+        <span class="mobile-brand-title" onclick="switchView('dashboard')">NovaCRM</span>
 
         <div class="search-bar" id="globalSearchBox">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -1168,16 +1169,7 @@
       </div>
     </div>
 
-    
-
     <!-- Messages Container -->
-    
-    
-      <div class="ai-questions-grid" id="chatQuestionsGrid">
-        <!-- Rendered dynamically by chatbot.js -->
-      </div>
-    </div>
-
     <div class="ai-messages-list" id="chatMessagesList">
       <!-- Messages rendered dynamically by chatbot.js -->
     </div>

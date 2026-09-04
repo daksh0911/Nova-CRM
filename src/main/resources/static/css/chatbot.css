@@ -706,3 +706,82 @@
   border-color: var(--accent);
   transform: translateX(3px);
 }
+
+/* ── Mobile Responsive Rules for AI Copilot Chatbot ── */
+@media (max-width: 640px) {
+  .ai-chatbot-widget {
+    bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom, 0px) + 12px) !important;
+    right: 14px !important;
+    z-index: 300;
+  }
+  .ai-orb-btn {
+    width: 46px;
+    height: 46px;
+    box-shadow: 0 6px 18px rgba(20, 184, 166, 0.4);
+  }
+  .ai-orb-icon {
+    width: 22px;
+    height: 22px;
+  }
+  .ai-orb-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  .ai-orb-pill {
+    display: none !important;
+  }
+
+  .ai-chat-drawer {
+    position: fixed !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom, 0px) + 8px) !important;
+    width: auto !important;
+    max-width: none !important;
+    height: calc(100dvh - var(--mobile-nav-h) - env(safe-area-inset-bottom, 0px) - 76px) !important;
+    max-height: calc(100dvh - var(--mobile-nav-h) - env(safe-area-inset-bottom, 0px) - 76px) !important;
+    border-radius: 16px !important;
+    transform-origin: bottom center;
+    transform: translateY(24px) scale(0.96) !important;
+    z-index: 400;
+  }
+  .ai-chat-drawer.open {
+    transform: translateY(0) scale(1) !important;
+  }
+  .ai-chat-header {
+    padding: 12px 14px;
+  }
+  .ai-avatar-3d {
+    width: 32px;
+    height: 32px;
+  }
+  .ai-avatar-3d svg {
+    width: 16px;
+    height: 16px;
+  }
+  .ai-header-title strong {
+    font-size: 13px;
+  }
+  .ai-chat-footer {
+    padding: 8px 10px;
+  }
+  .ai-chat-input {
+    font-size: 12px;
+  }
+  .ai-question-item {
+    padding: 9px 12px;
+    font-size: 11.5px;
+    border-radius: 10px;
+  }
+  .ai-question-item .q-icon {
+    font-size: 14px;
+  }
+  .ai-msg {
+    max-width: 92%;
+  }
+  .ai-msg-bubble {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+}
+
