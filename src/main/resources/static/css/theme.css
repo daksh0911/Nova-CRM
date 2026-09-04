@@ -1,0 +1,124 @@
+/* ══════════════════════════════════════════
+   NovaCRM — Design Tokens & Base Reset
+   ══════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { height: 100%; -webkit-font-smoothing: antialiased; }
+body { height: 100%; font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); }
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+table { width: 100%; border-collapse: collapse; }
+
+:root, [data-theme="light"] {
+  /* 🌿 Low-Glare Muted Mineral Sage Palette (Zero harsh white, ultra-comfortable matte) */
+  --bg: #bdcbc5;
+  --bg-card: #cdd9d3;
+  --bg-sidebar: #adc0b9;
+  --bg-hover: #9fb3ac;
+  --bg-active: #91a79f;
+  --border: #96aba2;
+  --border-light: #adbfb7;
+
+  --text: #0c1c17;
+  --text-secondary: #1e362f;
+  --text-muted: #38544c;
+  --text-faint: #59756d;
+
+  --accent: #0f766e;
+  --accent-hover: #115e59;
+  --accent-light: #89c7b9;
+  --accent-bg: #a3d4c8;
+
+  --violet: #5b21b6;
+  --violet-light: #c4b5fd;
+  --green: #047857;
+  --green-light: #a7f3d0;
+  --amber: #b45309;
+  --amber-light: #fde68a;
+  --red: #b91c1c;
+  --red-light: #fecaca;
+  --blue: #1d4ed8;
+  --blue-light: #bfdbfe;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(12, 28, 23, 0.08), 0 1px 2px rgba(12, 28, 23, 0.06);
+  --shadow-md: 0 4px 12px rgba(12, 28, 23, 0.12);
+  --shadow-lg: 0 8px 24px rgba(12, 28, 23, 0.16);
+  --transition: 0.2s ease;
+
+  --sidebar-w: 250px;
+  --topbar-h: 60px;
+  --mobile-nav-h: 64px;
+}
+
+[data-theme="paper"] {
+  /* 📜 Warm Low-Glare Paper / Sepia Palette (Zero blue light glare, e-reader comfort) */
+  --bg: #d0c7b5;
+  --bg-card: #ded5c4;
+  --bg-sidebar: #c2b7a2;
+  --bg-hover: #b4a790;
+  --bg-active: #a69880;
+  --border: #a89a83;
+  --border-light: #beb29d;
+
+  --text: #19140e;
+  --text-secondary: #362e22;
+  --text-muted: #574b39;
+  --text-faint: #796a54;
+
+  --accent: #0f766e;
+  --accent-hover: #115e59;
+  --accent-light: #9ed5c8;
+  --accent-bg: #b2ded4;
+
+  --violet: #5b21b6;
+  --violet-light: #c4b5fd;
+  --green: #047857;
+  --green-light: #a7f3d0;
+  --amber: #b45309;
+  --amber-light: #fde68a;
+  --red: #b91c1c;
+  --red-light: #fecaca;
+  --blue: #1d4ed8;
+  --blue-light: #bfdbfe;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(25, 20, 14, 0.08), 0 1px 2px rgba(25, 20, 14, 0.06);
+  --shadow-md: 0 4px 12px rgba(25, 20, 14, 0.12);
+  --shadow-lg: 0 8px 24px rgba(25, 20, 14, 0.16);
+  --transition: 0.2s ease;
+
+  --sidebar-w: 250px;
+  --topbar-h: 60px;
+  --mobile-nav-h: 64px;
+}
+
+[data-theme="dark"] {
+  --bg: #0f1614;
+  --bg-card: #1a2420;
+  --bg-sidebar: #151e1b;
+  --bg-hover: #1e2e28;
+  --bg-active: #253530;
+  --border: #2a3a35;
+  --border-light: #223028;
+
+  --text: #e8f0ee;
+  --text-secondary: #a3b5b0;
+  --text-muted: #6b8580;
+  --text-faint: #4a6560;
+
+  --accent: #2dd4bf;
+  --accent-hover: #14b8a6;
+  --accent-light: #134e48;
+  --accent-bg: #0d2f2b;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }

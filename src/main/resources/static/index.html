@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaCRM — Modern Sales Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css?v=6.0">
+</head>
+
+<body>
+  <!-- Interactive 3D Ambient Constellation Canvas -->
+  <canvas id="ambient3DCanvas"></canvas>
+  <!-- Sidebar backdrop for mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- App Shell -->
+  <div class="app-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebarNav">
+      <div class="sidebar-header">
+        <a href="#" class="brand" onclick="switchView('dashboard'); return false;">
+          <div class="brand-logo">N</div>
+          <span class="brand-text">NovaCRM</span>
+        </a>
+        <button class="sidebar-close" id="sidebarClose" onclick="toggleSidebar()">✕</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Main</div>
+        <button class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" id="nav-pipeline" onclick="switchView('pipeline')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          <span>Pipeline</span>
+        </button>
+        <button class="nav-item" id="nav-inbox" onclick="switchView('inbox')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <span>Inbox</span>
+        </button>
+        <button class="nav-item" id="nav-accounts" onclick="switchView('accounts')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span>Accounts</span>
+        </button>
+        <button class="nav-item" id="nav-tasks" onclick="switchView('tasks')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          <span>Tasks</span>
+        </button>
+
+        <div class="nav-group-label">Intelligence</div>
+        <button class="nav-item" id="nav-automations" onclick="switchView('automations')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <span>Automations</span>
+        </button>
+        <button class="nav-item" id="nav-reports" onclick="switchView('reports')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          <span>Reports</span>
+        </button>
+        <button class="nav-item" id="nav-logs" onclick="switchView('logs')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          <span>Audit Log</span>
+        </button>
+
+        <div class="nav-group-label">Organization</div>
+        <button class="nav-item" id="nav-team" onclick="switchView('team')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+          <span>Team</span>
+        </button>
+        <button class="nav-item" id="nav-admin" onclick="switchView('admin')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Admin</span>
+        </button>
+      </nav>
+
+      <!-- User Profile in Sidebar -->
+      <div class="sidebar-user">
+        <div class="user-profile-mini">
+          <div class="avatar-chip" id="sidebarUserAvatar">DP</div>
+          <div class="user-profile-info">
+            <div class="user-profile-name" id="activeUserName">Daksh Patel</div>
+            <div class="user-profile-role" id="activeUserRole">Account Manager</div>
+          </div>
+        </div>
+        <select class="user-switcher" id="userSwitcherSelect" onchange="changeActiveUser(this.value)">
+          <option value="Daksh Patel" selected>Daksh Patel</option>
+          <option value="Sarah Sales">Sarah Sales</option>
+          <option value="Admin User">Admin User</option>
+        </select>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+
+        <div class="search-bar" id="globalSearchBox">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" placeholder="Search accounts, deals, people… (⌘K)" oninput="globalSearch(this.value)" aria-label="Search">
+          <div class="search-results" id="globalSearchResults"></div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Multi-Currency Engine -->
+          <select class="currency-select" id="currencySelector" onchange="setCurrency(this.value)" title="Global Currency Engine">
+            <option value="USD">USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="GBP">GBP (£)</option>
+            <option value="INR">INR (₹)</option>
+          </select>
+
+          <!-- Theme Toggle -->
+          <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
+            <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+
+          <!-- Notifications -->
+          <div class="notif-wrap">
+            <button class="icon-btn" id="notifBtn" onclick="toggleNotifications(event)" title="Notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span class="icon-dot"></span>
+            </button>
+            <div class="notif-panel" id="notifPanel">
+              <div class="notif-panel-header">
+                <strong>Notifications</strong>
+                <button onclick="clearAllNotifications(event)">Clear all</button>
+              </div>
+              <div class="notif-list" id="notifList"></div>
+            </div>
+          </div>
+
+        </div>
+      </header>
+
+      <!-- Scrollable Content -->
+      <main class="main" id="mainContent">
+
+        <!-- ═══ 1. DASHBOARD ═══ -->
+        <section id="view-dashboard" class="view-section active-view">
+          <!-- Hero -->
+          <div class="hero" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+            <div class="hero-content">
+              <span class="hero-badge" id="heroBadge">● Senior Account Manager</span>
+              <h1 id="welcomeHeading">Welcome back, Daksh 👋</h1>
+              <p class="hero-sub">Here's a live snapshot of your pipeline and accounts today.</p>
+            </div>
+            <div class="dashboard-live-clock-badge">
+              <span class="dash-clock-icon">⏱️</span>
+              <span id="dashboardLiveClock" class="dash-clock-time">--:--:--</span>
+              <span class="dash-clock-divider">|</span>
+              <span id="dashboardLiveDate" class="dash-clock-date">Live System Time</span>
+            </div>
+          </div>
+
+          <!-- KPI Row -->
+          <div class="kpi-grid">
+            <div class="kpi-card tilt-card-3d">
+              <div class="kpi-icon teal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></div>
+              <div class="kpi-body">
+                <div class="kpi-value" id="kpiClients">0</div>
+                <div class="kpi-label">Active Accounts</div>
+              </div>
+            </div>
+            <div class="kpi-card tilt-card-3d">
+              <div class="kpi-icon violet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
+              <div class="kpi-body">
+                <div class="kpi-value" id="kpiPipeline">$0</div>
+                <div class="kpi-label">Total Pipeline</div>
+              </div>
+            </div>
+            <div class="kpi-card tilt-card-3d">
+              <div class="kpi-icon green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+              <div class="kpi-body">
+                <div class="kpi-value" id="kpiWon">$0</div>
+                <div class="kpi-label">Won Revenue</div>
+              </div>
+            </div>
+            <div class="kpi-card tilt-card-3d">
+              <div class="kpi-icon amber"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 7V5a4 4 0 0 0-8 0v2"></path></svg></div>
+              <div class="kpi-body">
+                <div class="kpi-value" id="kpiDeals">0</div>
+                <div class="kpi-label">Active Deals</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Intelligence Cards -->
+          <div class="intel-grid">
+            <div class="intel-card tilt-card-3d">
+              <div class="intel-label">30-Day Forecast</div>
+              <div class="intel-value" id="intelForecast">$0</div>
+            </div>
+            <div class="intel-card tilt-card-3d">
+              <div class="intel-label">Conversion Rate</div>
+              <div class="intel-value" id="intelConversion">0%</div>
+            </div>
+            <div class="intel-card tilt-card-3d">
+              <div class="intel-label">High-Confidence</div>
+              <div class="intel-value" id="intelAttention">0 Deals</div>
+            </div>
+            <div class="intel-card tilt-card-3d">
+              <div class="intel-label">Avg Velocity</div>
+              <div class="intel-value" id="intelVelocity">0%</div>
+            </div>
+          </div>
+
+          <!-- Communications & Action Bar -->
+          <div class="actions-strip">
+            <button class="action-strip-btn tilt-card-3d" onclick="openCreateDealModal()">
+              <span class="action-icon teal">⚡</span>
+              <div>
+                <strong>+ New Deal</strong>
+                <span>Add pipeline opportunity</span>
+              </div>
+            </button>
+            <button class="action-strip-btn tilt-card-3d" onclick="openCallLogModal()">
+              <span class="action-icon green">📞</span>
+              <div>
+                <strong>Log Call</strong>
+                <span>Record client interaction</span>
+              </div>
+            </button>
+            <button class="action-strip-btn tilt-card-3d" onclick="openEmailModal()">
+              <span class="action-icon violet">✉️</span>
+              <div>
+                <strong>Send Pitch</strong>
+                <span>Compose client email</span>
+              </div>
+            </button>
+            <button class="action-strip-btn tilt-card-3d" onclick="openMeetingModal()">
+              <span class="action-icon amber">📅</span>
+              <div>
+                <strong>Book Meeting</strong>
+                <span>Schedule demo session</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- Forecasting & Quota Performance -->
+          <div class="dashboard-grid forecast-grid">
+            <div class="card tilt-card-3d">
+              <div class="card-head">
+                <div>
+                  <h3>Quarterly Revenue Forecast</h3>
+                  <div class="list-subtitle">Targets vs Actuals with real-time probability weighting</div>
+                </div>
+                <div class="quarter-toggle-group">
+                  <button class="quarter-btn" id="qbtn-Q1" onclick="selectQuarter('Q1')">Q1</button>
+                  <button class="quarter-btn" id="qbtn-Q2" onclick="selectQuarter('Q2')">Q2</button>
+                  <button class="quarter-btn active" id="qbtn-Q3" onclick="selectQuarter('Q3')">Q3</button>
+                  <button class="quarter-btn" id="qbtn-Q4" onclick="selectQuarter('Q4')">Q4</button>
+                </div>
+              </div>
+              <div class="forecast-body">
+                <div class="forecast-stats">
+                  <div>
+                    <span class="forecast-label">Target Revenue</span>
+                    <strong class="forecast-target" id="forecastTargetVal">$1,800,000</strong>
+                  </div>
+                  <div>
+                    <span class="forecast-label">Weighted Pipeline</span>
+                    <strong class="forecast-actual" id="forecastActualVal">$1,475,000</strong>
+                  </div>
+                  <div>
+                    <span class="forecast-label">Quota Gap</span>
+                    <strong class="forecast-gap" id="forecastGapVal">$325,000</strong>
+                  </div>
+                </div>
+                <div class="forecast-progress-wrap">
+                  <div class="forecast-progress-bar" id="forecastProgressBar" style="width: 82%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3D Radial Performance Gauges -->
+            <div class="card tilt-card-3d">
+              <div class="card-head">
+                <h3>Executive Telemetry</h3>
+              </div>
+              <div class="gauges-flex">
+                <div class="radial-gauge-card">
+                  <div class="gauge-circle-wrap">
+                    <svg class="radial-svg" viewBox="0 0 100 100">
+                      <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                      <circle class="gauge-fill teal" id="gaugeWinRate" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="65"></circle>
+                    </svg>
+                    <div class="gauge-val" id="gaugeWinRateVal">74%</div>
+                  </div>
+                  <span class="gauge-title">Win Rate</span>
+                </div>
+                <div class="radial-gauge-card">
+                  <div class="gauge-circle-wrap">
+                    <svg class="radial-svg" viewBox="0 0 100 100">
+                      <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                      <circle class="gauge-fill violet" id="gaugeQuota" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="45"></circle>
+                    </svg>
+                    <div class="gauge-val" id="gaugeQuotaVal">82%</div>
+                  </div>
+                  <span class="gauge-title">Quota Attained</span>
+                </div>
+                <div class="radial-gauge-card">
+                  <div class="gauge-circle-wrap">
+                    <svg class="radial-svg" viewBox="0 0 100 100">
+                      <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                      <circle class="gauge-fill green" id="gaugeHealth" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="25"></circle>
+                    </svg>
+                    <div class="gauge-val" id="gaugeHealthVal">90%</div>
+                  </div>
+                  <span class="gauge-title">Account Health</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart + Sidebar -->
+          <div class="dashboard-grid">
+            <div class="card chart-card">
+              <div class="card-head">
+                <h3>Revenue by Stage</h3>
+                <button class="btn-ghost" onclick="replayChartAnimation()">↻ Replay</button>
+              </div>
+              <div id="revenueChart"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h3>Top Deals</h3></div>
+              <div id="topDealsList" class="list-stack"></div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-head"><h3>Recent Activity</h3></div>
+              <div id="recentActivityList" class="list-stack"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Leaderboard</h3></div>
+              <div id="leaderboardList" class="list-stack"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ 2. PIPELINE ═══ -->
+        <section id="view-pipeline" class="view-section">
+          <div class="section-header pipeline-header">
+            <div>
+              <h1>Sales Pipeline</h1>
+              <p class="section-sub">Track and manage your deals across every stage.</p>
+            </div>
+            <div class="header-actions">
+              <select class="input select select-sort" id="pipelineSortSelect" onchange="sortPipeline(this.value)" title="Sort Pipeline Deals">
+                <option value="value-desc">Sort: Value (High to Low)</option>
+                <option value="value-asc">Sort: Value (Low to High)</option>
+                <option value="prob-desc">Sort: Win Probability</option>
+                <option value="name-asc">Sort: Deal Name (A-Z)</option>
+              </select>
+              <div class="filter-group">
+                <button class="filter-btn active" id="pipeline-filter-all" onclick="togglePipelineFilter('all')">All Deals</button>
+                <button class="filter-btn" id="pipeline-filter-my" onclick="togglePipelineFilter('my')">My Deals</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline-board">
+            <div class="stage" id="stage-prospect" ondrop="drop(event)" ondragover="allowDrop(event)">
+              <div class="stage-header">
+                <span class="stage-dot purple"></span>
+                <span class="stage-name">Lead In</span>
+                <span class="stage-count">0</span>
+                <button class="stage-quick-add-btn" onclick="openCreateDealModal('Lead In')" title="Add Lead In deal">+</button>
+              </div>
+            </div>
+            <div class="stage" id="stage-contacted" ondrop="drop(event)" ondragover="allowDrop(event)">
+              <div class="stage-header">
+                <span class="stage-dot blue"></span>
+                <span class="stage-name">Contacted</span>
+                <span class="stage-count">0</span>
+                <button class="stage-quick-add-btn" onclick="openCreateDealModal('Contacted')" title="Add Contacted deal">+</button>
+              </div>
+            </div>
+            <div class="stage" id="stage-proposal" ondrop="drop(event)" ondragover="allowDrop(event)">
+              <div class="stage-header">
+                <span class="stage-dot orange"></span>
+                <span class="stage-name">Proposal Sent</span>
+                <span class="stage-count">0</span>
+                <button class="stage-quick-add-btn" onclick="openCreateDealModal('Proposal Sent')" title="Add Proposal deal">+</button>
+              </div>
+            </div>
+            <div class="stage" id="stage-closed" ondrop="drop(event)" ondragover="allowDrop(event)">
+              <div class="stage-header">
+                <span class="stage-dot green"></span>
+                <span class="stage-name">Closed Won</span>
+                <span class="stage-count">0</span>
+                <button class="stage-quick-add-btn" onclick="openCreateDealModal('Closed Won')" title="Add Closed Won deal">+</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ 3. ACCOUNTS ═══ -->
+        <section id="view-accounts" class="view-section">
+          <div class="section-header">
+            <div>
+              <h1>Client Directory</h1>
+              <p class="section-sub">All corporate accounts and their details.</p>
+            </div>
+          </div>
+
+          <!-- Register New Account Quick Form -->
+          <div class="card account-register-card">
+            <div class="account-register-header">
+              <div class="account-register-title">
+                <span class="account-icon-pill">🏢</span>
+                <div>
+                  <h3>Register New Account</h3>
+                  <p>Quick corporate account onboarding with database persistence</p>
+                </div>
+              </div>
+            </div>
+            <form class="account-form-grid" onsubmit="event.preventDefault(); addClient();">
+              <div class="form-field">
+                <label class="form-label" for="clientName">Company Name <span class="required-star">*</span></label>
+                <input type="text" class="input" id="clientName" placeholder="e.g. Acme Corp" required>
+              </div>
+              <div class="form-field">
+                <label class="form-label" for="clientIndustry">Industry</label>
+                <input type="text" class="input" id="clientIndustry" placeholder="e.g. FinTech / SaaS">
+              </div>
+              <div class="form-field">
+                <label class="form-label" for="clientEmail">Corporate Email <span class="required-star">*</span></label>
+                <input type="email" class="input" id="clientEmail" placeholder="contact@acme.com" required>
+              </div>
+              <div class="form-field">
+                <label class="form-label" for="clientLocation">Headquarters / Location</label>
+                <input type="text" class="input" id="clientLocation" placeholder="e.g. New York, USA">
+              </div>
+              <div class="form-field form-field-btn">
+                <button type="submit" class="btn-primary account-submit-btn">
+                  <span>Add Account</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Filters -->
+          <div class="card">
+            <div class="filter-row">
+              <input type="text" class="input" id="clientSearch" placeholder="Search accounts..." oninput="filterClients()">
+              <select class="input select" id="clientStatusFilter" onchange="filterClients()">
+                <option value="All">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Onboarding">Onboarding</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Churned">Churned</option>
+              </select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Account</th>
+                    <th>Health</th>
+                    <th>Contact</th>
+                    <th>Location</th>
+                    <th>Owner</th>
+                    <th>Last Contact</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="clientTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ 4. TASKS ═══ -->
+        <section id="view-tasks" class="view-section">
+          <div class="section-header">
+            <div>
+              <h1>Action Items</h1>
+              <p class="section-sub">Your personal task list and quick notes.</p>
+            </div>
+          </div>
+
+          <div class="tasks-layout">
+            <div class="card">
+              <div class="card-head">
+                <h3>Tasks</h3>
+              </div>
+              <div class="add-task-row">
+                <input type="text" class="input" id="newTaskInput" placeholder="Add a new task…" onkeydown="if(event.key==='Enter') addNewTask()">
+                <button class="btn-primary" onclick="addNewTask()">Add</button>
+              </div>
+              <div id="taskList" class="task-list"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h3>Quick Notes</h3></div>
+              <textarea class="note-area" id="quickNote" placeholder="Write your notes here…"></textarea>
+              <button class="btn-secondary" onclick="saveNote()" style="margin-top:12px">💾 Save Note</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ INBOX ═══ -->
+        <section id="view-inbox" class="view-section">
+          <div class="section-header inbox-header-wrap">
+            <div>
+              <h1 style="margin:0 0 4px 0;">Omnichannel Unified Inbox</h1>
+              <p class="section-sub" style="margin:0;">Real-time synchronized communications feed across emails, call logs, calendar meets, and AI signals.</p>
+            </div>
+            <div class="inbox-actions-header">
+              <button class="btn btn-outline btn-sm" onclick="openEmailModal()">
+                <span>✉️</span> Compose Email
+              </button>
+              <button class="btn-primary btn-sm" onclick="openCallLogModal()">
+                <span>📞</span> Log Touchpoint
+              </button>
+            </div>
+          </div>
+
+          <div class="card inbox-toolbar-card">
+            <div class="inbox-toolbar-row">
+              <div class="inbox-filter-bar">
+                <button class="inbox-filter-btn active" data-type="all" onclick="renderInboxFeed('all')">
+                  <span>💬</span> All Messages
+                </button>
+                <button class="inbox-filter-btn" data-type="email" onclick="renderInboxFeed('email')">
+                  <span>✉️</span> Emails
+                </button>
+                <button class="inbox-filter-btn" data-type="call" onclick="renderInboxFeed('call')">
+                  <span>📞</span> Calls
+                </button>
+                <button class="inbox-filter-btn" data-type="meeting" onclick="renderInboxFeed('meeting')">
+                  <span>📅</span> Meetings
+                </button>
+                <button class="inbox-filter-btn" data-type="system" onclick="renderInboxFeed('system')">
+                  <span>🤖</span> AI Signals
+                </button>
+              </div>
+              <div class="inbox-stream-badge">
+                <span class="status-dot green pulse"></span>
+                <span>Active Feed</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="inboxFeedContainer" class="inbox-feed-list"></div>
+        </section>
+
+        <!-- ═══ AUTOMATIONS ═══ -->
+        <section id="view-automations" class="view-section">
+          <div class="section-header">
+            <div>
+              <h1>Workflow Automation Engine</h1>
+              <p class="section-sub">Autonomous IFTTT pipeline rules, automated onboarding delegation, and retention alarms.</p>
+            </div>
+            <button class="btn-primary btn-sm" onclick="createNewRuleModal()">⚡ New Automation Rule</button>
+          </div>
+
+          <div class="automations-grid" id="automationsListContainer"></div>
+        </section>
+
+        <!-- ═══ 5. REPORTS ═══ -->
+        <section id="view-reports" class="view-section">
+          <div class="section-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
+            <div>
+              <h1 style="margin:0 0 4px 0;">Reports & Revenue Intelligence</h1>
+              <p class="section-sub" style="margin:0;">Multi-dimensional analytics, pipeline stage velocity, and team performance metrics.</p>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <select class="input select" id="reportScopeFilter" onchange="refreshReport()" style="height:38px;font-weight:600;font-size:12px;padding:0 12px;" title="Filter by sales representative or global organization">
+                <option value="All">🌐 All Organization (Global)</option>
+                <option value="Daksh Patel">👤 My Territory (Daksh Patel)</option>
+                <option value="Sarah Sales">👤 Sarah Sales</option>
+                <option value="Admin User">👤 Admin User</option>
+              </select>
+              <button class="btn btn-outline btn-sm" onclick="exportReportData()" style="height:38px;padding:0 14px;font-weight:600;display:inline-flex;align-items:center;gap:6px;">
+                <span>📥</span> Export CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- KPI Row -->
+          <div class="kpi-grid" style="margin-bottom:24px;">
+            <div class="kpi-card tilt-card-3d">
+              <div class="kpi-icon teal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></div>
+              <div class="kpi-body">
+                <div class="kpi-value" id="reportActiveClients">0</div>
+                <div class="kpi-label">Active Accounts</div>
+              </div>
+            </div>
+            <div class="kpi-card tilt-card-3d">
+              <div class="kpi-icon violet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
+              <div class="kpi-body">
+                <div class="kpi-value" id="reportPipeline">$0</div>
+                <div class="kpi-label">Total Pipeline</div>
+              </div>
+            </div>
+            <div class="kpi-card tilt-card-3d">
+              <div class="kpi-icon green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+              <div class="kpi-body">
+                <div class="kpi-value" id="reportWonRevenue">$0</div>
+                <div class="kpi-label">Won Revenue</div>
+              </div>
+            </div>
+            <div class="kpi-card tilt-card-3d">
+              <div class="kpi-icon amber"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+              <div class="kpi-body">
+                <div class="kpi-value" id="reportWinRate">0%</div>
+                <div class="kpi-label">Win Rate %</div>
+              </div>
+            </div>
+            <div class="kpi-card tilt-card-3d">
+              <div class="kpi-icon blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 7V5a4 4 0 0 0-8 0v2"></path></svg></div>
+              <div class="kpi-body">
+                <div class="kpi-value" id="reportTotalLeads">0</div>
+                <div class="kpi-label">Total Deals</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage Funnel & Industry Breakdown -->
+          <div class="dashboard-grid" style="margin-bottom:24px;">
+            <div class="card">
+              <div class="card-head" style="margin-bottom:18px;">
+                <div>
+                  <h3 style="margin:0 0 4px 0;">Pipeline Conversion Funnel</h3>
+                  <p class="card-desc" style="margin:0;">ARR volume and deal density by stage</p>
+                </div>
+                <span class="tag" id="reportFunnelTag">All Stages</span>
+              </div>
+              <div id="reportStageFunnelContainer"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head" style="margin-bottom:18px;">
+                <div>
+                  <h3 style="margin:0 0 4px 0;">Industry & Sector Distribution</h3>
+                  <p class="card-desc" style="margin:0;">Account concentration across market segments</p>
+                </div>
+              </div>
+              <div id="industryBreakdown"></div>
+            </div>
+          </div>
+
+          <!-- Team Leaderboard & Velocity -->
+          <div class="card" style="margin-bottom:24px;">
+            <div class="card-head" style="margin-bottom:16px;">
+              <div>
+                <h3 style="margin:0 0 4px 0;">Sales Performance Leaderboard</h3>
+                <p class="card-desc" style="margin:0;">Quota pacing, managed pipeline, and revenue generated per team member</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="reportTeamTable">
+                <thead>
+                  <tr>
+                    <th>Account Executive</th>
+                    <th>Active Accounts</th>
+                    <th>Deals Managed</th>
+                    <th>Pipeline Value</th>
+                    <th>Closed Won</th>
+                    <th>Win Rate</th>
+                  </tr>
+                </thead>
+                <tbody id="reportTeamTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Hidden helper spans for backward compatibility -->
+          <span id="hcActiveClients" hidden></span>
+          <span id="hcPipeline" hidden></span>
+          <span id="hcWonDeals" hidden></span>
+          <span id="reportWonDeals" hidden></span>
+          <span id="reportLeadIn" hidden></span>
+          <span id="reportContacted" hidden></span>
+          <span id="reportProposal" hidden></span>
+          <span id="reportClosed" hidden></span>
+        </section>
+
+        <!-- ═══ 6. AUDIT LOG ═══ -->
+        <section id="view-logs" class="view-section">
+          <div class="section-header">
+            <div>
+              <h1>Audit Trail</h1>
+              <p class="section-sub">Complete activity log across the platform.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-secondary" onclick="exportAuditLogs()">📤 Export Log</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="log-stats">
+              <span>Total: <strong id="logStatTotal">0</strong></span>
+              <span>Security: <strong id="logStatSecurity">0</strong></span>
+              <span>Pipeline: <strong id="logStatPipeline">0</strong></span>
+            </div>
+            <div class="filter-row">
+              <input type="text" class="input" id="logSearchInput" placeholder="Search logs..." oninput="filterLogs()">
+              <select class="input select" id="logCategoryFilter" onchange="filterLogs()">
+                <option value="All">All Categories</option>
+                <option value="PIPELINE">Pipeline</option>
+                <option value="ACCOUNTS">Accounts</option>
+                <option value="IDENTITY">Identity</option>
+                <option value="SECURITY">Security</option>
+                <option value="SYSTEM">System</option>
+              </select>
+              <button class="btn-ghost" onclick="clearAuditFilters()">Clear</button>
+            </div>
+            <ul class="log-list" id="globalLogger"></ul>
+          </div>
+        </section>
+
+        <!-- ═══ 7. TEAM ═══ -->
+        <section id="view-team" class="view-section">
+          <div class="section-header">
+            <div>
+              <h1>Team Directory</h1>
+              <p class="section-sub">Your sales and operations team members.</p>
+            </div>
+          </div>
+          <div class="people-grid" id="teamPeopleGrid"></div>
+        </section>
+
+        <!-- ═══ 8. ADMIN ═══ -->
+        <section id="view-admin" class="view-section">
+          <div class="section-header">
+            <div>
+              <h1>User Administration</h1>
+              <p class="section-sub">Manage team members and access levels.</p>
+            </div>
+          </div>
+
+          <div class="card form-card">
+            <h3>Add Team Member</h3>
+            <form class="form-row" onsubmit="event.preventDefault(); addUser();">
+              <input type="text" class="input" id="userName" placeholder="Full name *" required>
+              <input type="email" class="input" id="userEmail" placeholder="Email *" required>
+              <input type="text" class="input" id="userRole" placeholder="Role">
+              <button type="submit" class="btn-primary">Grant Access</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Member</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="userTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Dialog Overlay -->
+  <div class="modal-overlay" id="dealModalOverlay" onclick="if(event.target===this) closeDealDetails()">
+    <div class="deal-modal-content"></div>
+  </div>
+
+  <!-- Raycast / Spotlight Style Command Palette Modal -->
+  <div class="modal-overlay cmd-overlay" id="commandPaletteModal" onclick="if(event.target===this) closeCommandPalette()">
+    <div class="cmd-palette-box">
+      <div class="cmd-palette-search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="cmdInput" placeholder="Type a command or search deals, accounts, actions... (↑↓ to navigate, Enter to run)" oninput="filterCommandPalette(this.value)">
+        <span class="cmd-esc-badge">ESC</span>
+      </div>
+      <div class="cmd-results-list" id="cmdResultsList"></div>
+      <div class="cmd-palette-footer">
+        <span>Navigation: <kbd>↑</kbd> <kbd>↓</kbd></span>
+        <span>Execute: <kbd>↵ Enter</kbd></span>
+        <span>Close: <kbd>ESC</kbd></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Communications: Call Logger Modal -->
+  <div class="modal-overlay" id="callLogModal" onclick="if(event.target===this) closeCallLogModal()">
+    <div class="deal-modal-content">
+      <div class="deal-modal-header">
+        <div>
+          <span class="tag">COMMUNICATIONS</span>
+          <h2 style="margin:8px 0 2px;font-size:18px;color:var(--text);">Log Client Call</h2>
+          <div style="font-size:12px;color:var(--text-muted);">Record interaction notes directly into account & deal history</div>
+        </div>
+        <button class="toast-close" onclick="closeCallLogModal()" style="font-size:20px;">✕</button>
+      </div>
+      <div class="deal-modal-body">
+        <form onsubmit="event.preventDefault(); submitCallLog();" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+            <div class="form-field">
+              <label class="form-label" for="callTargetLead">Related Deal / Account *</label>
+              <select id="callTargetLead" class="input-text" required></select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="callDuration">Call Duration</label>
+              <select id="callDuration" class="input-text">
+                <option value="5 mins">5 mins (Quick Touchpoint)</option>
+                <option value="15 mins" selected>15 mins (Status Check)</option>
+                <option value="30 mins">30 mins (Discovery / Scoping)</option>
+                <option value="45 mins">45 mins (Executive Presentation)</option>
+                <option value="60 mins">60 mins (Contract Negotiation)</option>
+              </select>
+            </div>
+          </div>
+          <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+            <div class="form-field">
+              <label class="form-label" for="callOutcome">Call Outcome *</label>
+              <select id="callOutcome" class="input-text">
+                <option value="Connected & Interested" selected>Connected & Interested</option>
+                <option value="Meeting Scheduled">Meeting Scheduled</option>
+                <option value="Pricing Requested">Pricing Requested</option>
+                <option value="Left Voicemail">Left Voicemail</option>
+                <option value="Gatekeeper Block">Gatekeeper / Reschedule</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="callFollowUp">Follow-up Date</label>
+              <input type="text" id="callFollowUp" class="input-text" placeholder="e.g. Tomorrow 10 AM, Sep 18">
+            </div>
+          </div>
+          <div class="call-wave-wrap">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Live Call Telemetry & AI Signals</span>
+              <span style="font-size:11px;color:var(--green);font-weight:600;">● Active Voice Stream</span>
+            </div>
+            <canvas id="callWaveformCanvas" class="call-wave-canvas" width="480" height="48"></canvas>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="callNotes">Call Summary & Next Steps *</label>
+            <textarea id="callNotes" class="note-area" style="min-height:90px;" placeholder="Discussed SLA provisions, client will sign after Q3 budget signoff..." required></textarea>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:10px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeCallLogModal()">Cancel</button>
+            <button type="submit" class="btn-primary btn-sm">Save Call Log</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Communications: Quick Email Composer Modal -->
+  <div class="modal-overlay" id="emailComposerModal" onclick="if(event.target===this) closeEmailModal()">
+    <div class="deal-modal-content">
+      <div class="deal-modal-header">
+        <div>
+          <span class="tag">OUTREACH</span>
+          <h2 style="margin:8px 0 2px;font-size:18px;color:var(--text);">Compose Client Email</h2>
+          <div style="font-size:12px;color:var(--text-muted);">Send tailored pitch, follow-up, or proposal with instant audit logging</div>
+        </div>
+        <button class="toast-close" onclick="closeEmailModal()" style="font-size:20px;">✕</button>
+      </div>
+      <div class="deal-modal-body">
+        <div style="margin-bottom:12px;">
+          <label class="form-label" style="margin-bottom:6px;display:block;">Quick Template Presets:</label>
+          <div class="template-chips-wrap">
+            <button type="button" class="template-chip active" onclick="applyEmailTemplate('demo-followup')">Demo Follow-up</button>
+            <button type="button" class="template-chip" onclick="applyEmailTemplate('proposal-send')">Proposal Review</button>
+            <button type="button" class="template-chip" onclick="applyEmailTemplate('check-in')">Q3 Check-in</button>
+            <button type="button" class="template-chip" onclick="applyEmailTemplate('custom')">Blank</button>
+          </div>
+        </div>
+        <form onsubmit="event.preventDefault(); submitSendEmail();" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+            <div class="form-field">
+              <label class="form-label" for="emailTargetDeal">Recipient / Deal</label>
+              <select id="emailTargetDeal" class="input-text" onchange="syncEmailRecipient(this.value)"></select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="emailRecipientInput">To (Email Address) *</label>
+              <input type="email" id="emailRecipientInput" class="input-text" required placeholder="client@company.com">
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="emailSubject">Subject Line *</label>
+            <input type="text" id="emailSubject" class="input-text" required placeholder="NovaCRM — Solution Architecture & Proposal">
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="emailBody">Message Body *</label>
+            <textarea id="emailBody" class="note-area" style="min-height:120px;" required placeholder="Hi John, Great speaking with you..."></textarea>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:10px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeEmailModal()">Cancel</button>
+            <button type="submit" class="btn-primary btn-sm">✉️ Send & Log Outreach</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Communications: Meeting Scheduler Modal -->
+  <div class="modal-overlay" id="meetingModal" onclick="if(event.target===this) closeMeetingModal()">
+    <div class="deal-modal-content">
+      <div class="deal-modal-header">
+        <div>
+          <span class="tag">CALENDAR</span>
+          <h2 style="margin:8px 0 2px;font-size:18px;color:var(--text);">Schedule Client Meeting</h2>
+          <div style="font-size:12px;color:var(--text-muted);">Books demo or pricing review and registers into task ledger</div>
+        </div>
+        <button class="toast-close" onclick="closeMeetingModal()" style="font-size:20px;">✕</button>
+      </div>
+      <div class="deal-modal-body">
+        <form onsubmit="event.preventDefault(); submitMeetingSchedule();" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="form-field">
+            <label class="form-label" for="meetingTitle">Meeting Topic / Title *</label>
+            <input type="text" id="meetingTitle" class="input-text" required placeholder="e.g. Enterprise Solution Scoping & Demo">
+          </div>
+          <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+            <div class="form-field">
+              <label class="form-label" for="meetingTargetDeal">Related Opportunity</label>
+              <select id="meetingTargetDeal" class="input-text"></select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="meetingLocation">Meeting Platform</label>
+              <select id="meetingLocation" class="input-text">
+                <option value="Google Meet">Google Meet (Auto-generated)</option>
+                <option value="Zoom Meeting">Zoom Video Call</option>
+                <option value="On-Site Client Office">On-Site Client Office</option>
+                <option value="Phone Bridge">Phone Bridge</option>
+              </select>
+            </div>
+          </div>
+          <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+            <div class="form-field">
+              <label class="form-label" for="meetingDate">Date & Time *</label>
+              <input type="text" id="meetingDate" class="input-text" required placeholder="e.g. Sep 14 · 3:00 PM EST">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="meetingDuration">Duration</label>
+              <select id="meetingDuration" class="input-text">
+                <option value="30 mins" selected>30 mins</option>
+                <option value="45 mins">45 mins</option>
+                <option value="60 mins">60 mins</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:10px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeMeetingModal()">Cancel</button>
+            <button type="submit" class="btn-primary btn-sm">📅 Confirm & Schedule</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Proposal & PDF Quote Generator Modal -->
+  <div class="modal-overlay" id="quoteModal" onclick="if(event.target===this) closeQuoteModal()">
+    <div class="quote-modal-content">
+      <div class="deal-modal-header">
+        <div>
+          <span class="tag">EXECUTIVE PROPOSAL</span>
+          <h2 id="quoteModalTitle" style="margin:8px 0 2px;font-size:18px;color:var(--text);">Executive Proposal Quote</h2>
+          <div style="font-size:12px;color:var(--text-muted);" id="quoteDocId">PROPOSAL-QT-82910</div>
+        </div>
+        <button class="toast-close" onclick="closeQuoteModal()" style="font-size:20px;">✕</button>
+      </div>
+
+      <div class="quote-paper">
+        <div class="quote-paper-header">
+          <div>
+            <div style="font-weight:800;font-size:16px;color:var(--accent);">NovaCRM Enterprise Solution</div>
+            <div style="font-size:12px;color:var(--text-muted);">Prepared for: <strong id="quoteClientName" style="color:var(--text);">Acme Corp</strong></div>
+            <div style="font-size:12px;color:var(--text-muted);" id="quoteContactName">Contact (email@company.com)</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Validity</div>
+            <div style="font-size:13px;font-weight:600;color:var(--green);">30 Days Guaranteed</div>
+          </div>
+        </div>
+
+        <table class="quote-calc-table">
+          <thead>
+            <tr><th>Item & Scope</th><th style="text-align:right;">Allocated Amount</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Core SaaS Platform Seats & Dedicated Host</strong><br><span style="font-size:11px;color:var(--text-muted);">High-availability multi-tenant cluster with 99.99% uptime SLA</span></td><td style="text-align:right;font-weight:600;" id="quoteItem1Price">$32,500</td></tr>
+            <tr><td><strong>Custom Integration & API Connectors</strong><br><span style="font-size:11px;color:var(--text-muted);">Real-time bidirectional synchronization pipeline</span></td><td style="text-align:right;font-weight:600;" id="quoteItem2Price">$12,500</td></tr>
+            <tr><td><strong>Dedicated Implementation & Training</strong><br><span style="font-size:11px;color:var(--text-muted);">Dedicated solutions engineer & white-glove team training</span></td><td style="text-align:right;font-weight:600;" id="quoteItem3Price">$5,000</td></tr>
+          </tbody>
+        </table>
+
+        <!-- Interactive Discount Slider -->
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:12px;font-weight:600;color:var(--text);">Executive Discretionary Discount:</span>
+            <span id="quoteDiscountLabel" style="font-size:12px;font-weight:700;color:var(--accent);">5% Discount</span>
+          </div>
+          <input type="range" id="quoteDiscountSlider" min="0" max="25" step="1" value="5" style="width:100%;accent-color:var(--accent);cursor:pointer;" oninput="recalculateQuote(this.value)">
+        </div>
+
+        <div class="quote-total-box">
+          <div class="quote-total-row"><span>Subtotal:</span><strong id="quoteSubtotal">$50,000</strong></div>
+          <div class="quote-total-row" style="color:var(--green);"><span>Partner Discount:</span><strong id="quoteDiscountAmount">-$2,500</strong></div>
+          <div class="quote-total-row"><span>Estimated Tax / VAT (8.25%):</span><strong id="quoteTaxAmount">$3,918</strong></div>
+          <div class="quote-total-row quote-grand-total"><span>Grand Total:</span><strong id="quoteGrandTotal">$51,418</strong></div>
+        </div>
+
+        <!-- Signature Pad -->
+        <div class="signature-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:12px;font-weight:600;color:var(--text);">Authorized Executive Signature</span>
+            <button type="button" class="btn-text btn-xs" onclick="clearSignaturePad()" style="color:var(--red);">Clear</button>
+          </div>
+          <canvas id="signaturePadCanvas" class="signature-canvas" width="440" height="110"></canvas>
+          <div style="font-size:11px;color:var(--text-muted);">Sign with finger, stylus, or cursor to execute digital proposal binding</div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="printProposalQuote()">🖨️ Print / Export PDF</button>
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="closeQuoteModal()">Cancel</button>
+          <button type="button" class="btn-primary btn-sm" onclick="saveProposalQuote()">Save & Dispatch Quote</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSV Data Importer Modal -->
+  <div class="modal-overlay" id="csvImportModal" onclick="if(event.target===this) closeCsvImportModal()">
+    <div class="deal-modal-content">
+      <div class="deal-modal-header">
+        <div>
+          <span class="tag">BULK INGESTION</span>
+          <h2 style="margin:8px 0 2px;font-size:18px;color:var(--text);">Import Deals via CSV</h2>
+          <div style="font-size:12px;color:var(--text-muted);">Paste comma-separated rows or spreadsheets to ingest opportunities</div>
+        </div>
+        <button class="toast-close" onclick="closeCsvImportModal()" style="font-size:20px;">✕</button>
+      </div>
+
+      <div class="deal-modal-body">
+        <div class="csv-drop-zone" onclick="document.getElementById('csvTextInput').focus();">
+          <div style="font-size:24px;margin-bottom:4px;">📥</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);">Paste CSV data below</div>
+          <div style="font-size:11px;color:var(--text-muted);">Format: Company, Value, Stage, Contact, Email, Category</div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="csvTextInput">CSV Data Rows</label>
+          <textarea id="csvTextInput" class="note-area" style="min-height:100px;font-family:monospace;font-size:12px;" placeholder="Nexus Dynamics, 85000, Proposal Sent, Alex Mercer, alex@nexus.io, Enterprise Tech&#10;Vortex Systems, 120000, Contacted, Laura Vance, laura@vortex.com, Cloud Infrastructure" oninput="parseCsvInput()"></textarea>
+        </div>
+
+        <div id="csvPreviewContainer" style="margin-top:12px;"></div>
+
+        <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:16px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="closeCsvImportModal()">Cancel</button>
+          <button type="button" class="btn-primary btn-sm" onclick="submitCsvImport()">📥 Ingest Opportunities</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts Cheatsheet Modal -->
+  <div class="modal-overlay" id="shortcutsModal" onclick="if(event.target===this) toggleShortcutsModal()">
+    <div class="deal-modal-content" style="max-width:540px;">
+      <div class="deal-modal-header">
+        <div>
+          <span class="tag">PRODUCTIVITY</span>
+          <h2 style="margin:8px 0 2px;font-size:18px;color:var(--text);">Keyboard Shortcuts</h2>
+          <div style="font-size:12px;color:var(--text-muted);">Power user commands for ultra-fast navigation</div>
+        </div>
+        <button class="toast-close" onclick="toggleShortcutsModal()" style="font-size:20px;">✕</button>
+      </div>
+
+      <div class="shortcuts-grid">
+        <div class="shortcut-card">
+          <span class="shortcut-desc">Command Palette / Search</span>
+          <div class="shortcut-keys"><span class="kbd-chip">⌘ / Ctrl</span><span class="kbd-chip">K</span></div>
+        </div>
+        <div class="shortcut-card">
+          <span class="shortcut-desc">Shortcuts Cheatsheet</span>
+          <div class="shortcut-keys"><span class="kbd-chip">?</span></div>
+        </div>
+        <div class="shortcut-card">
+          <span class="shortcut-desc">Switch to Dashboard</span>
+          <div class="shortcut-keys"><span class="kbd-chip">1</span></div>
+        </div>
+        <div class="shortcut-card">
+          <span class="shortcut-desc">Switch to Pipeline</span>
+          <div class="shortcut-keys"><span class="kbd-chip">2</span></div>
+        </div>
+        <div class="shortcut-card">
+          <span class="shortcut-desc">Switch to Inbox</span>
+          <div class="shortcut-keys"><span class="kbd-chip">3</span></div>
+        </div>
+        <div class="shortcut-card">
+          <span class="shortcut-desc">Switch to Accounts</span>
+          <div class="shortcut-keys"><span class="kbd-chip">4</span></div>
+        </div>
+        <div class="shortcut-card">
+          <span class="shortcut-desc">Close Active Modal</span>
+          <div class="shortcut-keys"><span class="kbd-chip">Esc</span></div>
+        </div>
+        <div class="shortcut-card">
+          <span class="shortcut-desc">Toggle Audio FX</span>
+          <div class="shortcut-keys"><span class="kbd-chip">M</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="toggleShortcutsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3D Physics Confetti Canvas -->
+  <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;display:none;"></canvas>
+
+  
+  <!-- 3D Nova AI Copilot Launcher Widget -->
+  <div class="ai-chatbot-widget" id="aiChatbotWidget" onclick="toggleChatbot()">
+    <div class="ai-orb-pill">
+      <span>Nova Copilot</span>
+      <span class="hotkey-hint">Press C</span>
+    </div>
+    <button type="button" class="ai-orb-btn" aria-label="Toggle Nova AI Copilot">
+      <div class="ai-orb-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+      </div>
+      <div class="ai-orb-status-dot"></div>
+    </button>
+  </div>
+
+  <!-- 3D Glassmorphic AI Chat Drawer -->
+  <aside class="ai-chat-drawer" id="aiChatDrawer" role="dialog" aria-label="Nova AI Copilot Assistant">
+    <div class="ai-chat-header">
+      <div class="ai-header-left">
+        <div class="ai-avatar-3d">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        </div>
+        <div class="ai-header-title">
+          <strong>Nova AI Copilot <span class="ai-badge-pro">PRO</span></strong>
+          <span class="ai-header-status"><span class="ai-pulse-dot"></span> Live - Connected to CRM</span>
+        </div>
+      </div>
+      <div class="ai-header-actions">
+        <button type="button" class="ai-header-btn" onclick="clearChatHistory()" title="Reset Conversation">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg>
+        </button>
+        <button type="button" class="ai-header-btn" onclick="toggleChatbot(false)" title="Close Copilot">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+
+    
+
+    <!-- Messages Container -->
+    
+    
+      <div class="ai-questions-grid" id="chatQuestionsGrid">
+        <!-- Rendered dynamically by chatbot.js -->
+      </div>
+    </div>
+
+    <div class="ai-messages-list" id="chatMessagesList">
+      <!-- Messages rendered dynamically by chatbot.js -->
+    </div>
+
+    <!-- Typing Indicator -->
+    <div class="ai-typing-indicator" id="chatTypingIndicator">
+      <span class="ai-typing-dot"></span>
+      <span class="ai-typing-dot"></span>
+      <span class="ai-typing-dot"></span>
+    </div>
+
+    <!-- Input Footer -->
+    <form class="ai-chat-footer" onsubmit="event.preventDefault(); sendChatMessage();">
+      <div class="ai-input-wrap">
+        <input type="text" class="ai-chat-input" id="chatInput" placeholder="Ask Nova AI anything or press C..." autocomplete="off">
+      </div>
+      <button type="submit" class="ai-chat-send-btn" title="Send message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </form>
+  </aside>
+
+  <!-- Toast Stack -->
+  <div class="toast-stack" id="toastStack"></div>
+
+  <!-- Mobile bottom nav -->
+  <nav class="mobile-nav" id="mobileNav">
+    <button onclick="switchView('dashboard')" class="mobile-nav-item active" id="mob-dashboard">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+      <span>Home</span>
+    </button>
+    <button onclick="switchView('pipeline')" class="mobile-nav-item" id="mob-pipeline">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+      <span>Pipeline</span>
+    </button>
+    <button onclick="switchView('inbox')" class="mobile-nav-item" id="mob-inbox">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+      <span>Inbox</span>
+    </button>
+    <button onclick="switchView('accounts')" class="mobile-nav-item" id="mob-accounts">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+      <span>Accounts</span>
+    </button>
+    <button onclick="toggleSidebar()" class="mobile-nav-item" id="mob-more">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+      <span>More</span>
+    </button>
+  </nav>
+
+  <script src="js/data.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/quote.js"></script>
+  <script src="js/automation.js"></script>
+  <script src="js/motion.js"></script>
+  <script src="js/commands.js"></script>
+  <script src="js/pipeline.js"></script>
+  <script src="js/modules.js"></script>
+  <script src="js/chatbot.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

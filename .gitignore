@@ -1,0 +1,29 @@
+target/
+*.class
+
+# Logs
+*.log
+
+# Package Files
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Database local files
+data/*.db
+data/*.trace.db
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS files
+.DS_Store
+Thumbs.db
