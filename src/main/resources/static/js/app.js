@@ -332,48 +332,75 @@ function renderRevenueChart(userLeads = leads) {
   setupChartScrollTrigger(container);
 }
 
+let lastChartRisingTriggerTime = 0;
+
+function triggerChartRising(container = document.getElementById('revenueChart'), force = false) {
+  if (!container) return;
+  const now = Date.now();
+  // Throttle rapid re-triggers so animation doesn't jitter on rapid mouse moves
+  if (!force && (now - lastChartRisingTriggerTime < 800)) return;
+  lastChartRisingTriggerTime = now;
+
+  const bars = container.querySelectorAll('.chart-rising-bar');
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  const formatFn = isMobile && typeof compactMoney === 'function' ? compactMoney : money;
+
+  bars.forEach((bar, idx) => {
+    const targetHeight = bar.dataset.targetHeight || '25%';
+    const targetVal = parseFloat(bar.dataset.targetValue) || 0;
+    const delay = idx * 75;
+    const valText = bar.querySelector('.val-text');
+
+    bar.style.transition = 'none';
+    bar.style.height = '0%';
+    if (valText) valText.textContent = formatFn(0);
+
+    void bar.offsetHeight;
+
+    bar.style.transition = 'height 0.85s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    setTimeout(() => {
+      bar.style.height = targetHeight;
+      if (valText) animateValue(valText, 0, targetVal, 750, v => formatFn(v));
+    }, delay);
+  });
+}
+
 function setupChartScrollTrigger(container) {
   if (chartObserver) chartObserver.disconnect();
 
-  const triggerBarsRising = () => {
-    const bars = container.querySelectorAll('.chart-rising-bar');
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-    const formatFn = isMobile && typeof compactMoney === 'function' ? compactMoney : money;
-    bars.forEach(bar => {
-      const targetHeight = bar.dataset.targetHeight;
-      const targetVal = parseFloat(bar.dataset.targetValue) || 0;
-      const delay = parseInt(bar.dataset.delay) || 0;
-      const valText = bar.querySelector('.val-text');
-
-      setTimeout(() => {
-        bar.style.height = targetHeight;
-        if (valText) animateValue(valText, 0, targetVal, 800, v => formatFn(v));
-      }, delay);
-    });
-  };
-
+  // 1. Trigger when entering viewport (both mobile and PC)
   chartObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        triggerBarsRising();
+        triggerChartRising(container, true);
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.15 });
 
   chartObserver.observe(container);
-  triggerBarsRising();
+
+  // 2. Interactive trigger while user is on it (hover on PC, touch/tap on Mobile)
+  const chartCard = container.closest('.chart-card') || container;
+  if (chartCard && !chartCard._hasHoverTrigger) {
+    chartCard._hasHoverTrigger = true;
+
+    // Mouse hover trigger (PC)
+    chartCard.addEventListener('mouseenter', () => {
+      triggerChartRising(container);
+    });
+
+    // Touch / tap trigger (Mobile)
+    chartCard.addEventListener('pointerdown', () => {
+      triggerChartRising(container);
+    }, { passive: true });
+  }
+
+  // Initial rise on render
+  triggerChartRising(container, true);
 }
 
 function replayChartAnimation() {
-  const container = document.getElementById('revenueChart');
-  if (!container) return;
-  const bars = container.querySelectorAll('.chart-rising-bar');
-  bars.forEach(b => {
-    b.style.height = '0%';
-    const valText = b.querySelector('.val-text');
-    if (valText) valText.textContent = '$0';
-  });
-  setTimeout(() => setupChartScrollTrigger(container), 100);
+  triggerChartRising(document.getElementById('revenueChart'), true);
 }
 
 function renderTopDeals() {

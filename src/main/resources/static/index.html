@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/app.css?v=8.0">
+  <link rel="stylesheet" href="css/app.css?v=9.0">
 </head>
 
 <body>
@@ -232,7 +232,8 @@
                 <span>Record client interaction</span>
               </div>
             </button>
-            <button class="action-strip-btn tilt-card-3d" onclick="openEmailModal()">
+            <button class="action-strip-btn tilt-card-3d0
+            " onclick="openEmailModal()">
               <span class="action-icon violet">✉️</span>
               <div>
                 <strong>Send Pitch</strong>
@@ -326,10 +327,9 @@
 
           <!-- Chart + Sidebar -->
           <div class="dashboard-grid">
-            <div class="card chart-card">
+            <div class="card chart-card" id="revenueChartCard">
               <div class="card-head">
                 <h3>Revenue by Stage</h3>
-                <button class="btn-ghost" onclick="replayChartAnimation()">↻ Replay</button>
               </div>
               <div id="revenueChart"></div>
             </div>
@@ -1219,17 +1219,17 @@
     </button>
   </nav>
 
-  <script src="js/data.js"></script>
-  <script src="js/utils.js"></script>
-  <script src="js/sound.js"></script>
-  <script src="js/ai.js"></script>
-  <script src="js/quote.js"></script>
-  <script src="js/automation.js"></script>
-  <script src="js/motion.js"></script>
-  <script src="js/commands.js"></script>
-  <script src="js/pipeline.js"></script>
-  <script src="js/modules.js"></script>
-  <script src="js/chatbot.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/data.js?v=9.0"></script>
+  <script src="js/utils.js?v=9.0"></script>
+  <script src="js/sound.js?v=9.0"></script>
+  <script src="js/ai.js?v=9.0"></script>
+  <script src="js/quote.js?v=9.0"></script>
+  <script src="js/automation.js?v=9.0"></script>
+  <script src="js/motion.js?v=9.0"></script>
+  <script src="js/commands.js?v=9.0"></script>
+  <script src="js/pipeline.js?v=9.0"></script>
+  <script src="js/modules.js?v=9.0"></script>
+  <script src="js/chatbot.js?v=9.0"></script>
+  <script src="js/app.js?v=9.0"></script>
 </body>
 </html>
