@@ -12,6 +12,15 @@ function money(n) {
   return symbol + converted.toLocaleString('en-US', { maximumFractionDigits: 0 });
 }
 
+function compactMoney(n) {
+  const rate = (typeof EXCHANGE_RATES !== 'undefined' && EXCHANGE_RATES[currentCurrency]) || 1.0;
+  const symbol = (typeof CURRENCY_SYMBOLS !== 'undefined' && CURRENCY_SYMBOLS[currentCurrency]) || '$';
+  const val = Math.round(Number(n || 0) * rate);
+  if (val >= 1000000) return symbol + (val / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (val >= 1000) return symbol + (val / 1000).toFixed(0) + 'k';
+  return symbol + val;
+}
+
 function setCurrency(curr) {
   if (typeof CURRENCY_SYMBOLS === 'undefined' || !CURRENCY_SYMBOLS[curr]) return;
   currentCurrency = curr;

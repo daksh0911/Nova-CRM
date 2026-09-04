@@ -313,9 +313,11 @@ function renderRevenueChart(userLeads = leads) {
   });
 
   const maxVal = Math.max(...stageData.map(s => s.total), 50000);
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  const formatFn = isMobile && typeof compactMoney === 'function' ? compactMoney : money;
 
   const yLabels = [1, 0.75, 0.5, 0.25, 0].map(ratio => {
-    return '<div class="chart-y-tick"><span>' + money(maxVal * ratio) + '</span></div>';
+    return '<div class="chart-y-tick"><span>' + formatFn(maxVal * ratio) + '</span></div>';
   }).join('');
 
   const colsHtml = stageData.map((s, idx) => {
@@ -335,6 +337,8 @@ function setupChartScrollTrigger(container) {
 
   const triggerBarsRising = () => {
     const bars = container.querySelectorAll('.chart-rising-bar');
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+    const formatFn = isMobile && typeof compactMoney === 'function' ? compactMoney : money;
     bars.forEach(bar => {
       const targetHeight = bar.dataset.targetHeight;
       const targetVal = parseFloat(bar.dataset.targetValue) || 0;
@@ -343,7 +347,7 @@ function setupChartScrollTrigger(container) {
 
       setTimeout(() => {
         bar.style.height = targetHeight;
-        if (valText) animateValue(valText, 0, targetVal, 800, v => money(v));
+        if (valText) animateValue(valText, 0, targetVal, 800, v => formatFn(v));
       }, delay);
     });
   };
