@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/app.css?v=11.0">
+  <link rel="stylesheet" href="css/app.css?v=12.0">
 </head>
 
 <body>
@@ -445,6 +445,10 @@
                 <input type="email" class="input" id="clientEmail" placeholder="contact@acme.com" required>
               </div>
               <div class="form-field">
+                <label class="form-label" for="clientPhone">Contact Number</label>
+                <input type="tel" class="input" id="clientPhone" placeholder="e.g. +1 (555) 234-5678">
+              </div>
+              <div class="form-field">
                 <label class="form-label" for="clientLocation">Headquarters / Location</label>
                 <input type="text" class="input" id="clientLocation" placeholder="e.g. New York, USA">
               </div>
@@ -754,6 +758,7 @@
             <form class="form-row" onsubmit="event.preventDefault(); addUser();">
               <input type="text" class="input" id="userName" placeholder="Full name *" required>
               <input type="email" class="input" id="userEmail" placeholder="Email *" required>
+              <input type="tel" class="input" id="userPhone" placeholder="Contact number (e.g. +1 555-0100)">
               <input type="text" class="input" id="userRole" placeholder="Role">
               <button type="submit" class="btn-primary">Grant Access</button>
             </form>
@@ -766,6 +771,7 @@
                   <tr>
                     <th>Member</th>
                     <th>Email</th>
+                    <th>Contact Phone</th>
                     <th>Role</th>
                     <th>Actions</th>
                   </tr>
@@ -821,6 +827,12 @@
               <select id="callTargetLead" class="input-text" required></select>
             </div>
             <div class="form-field">
+              <label class="form-label" for="callPhoneNumber">Contact Number / Dialed Phone</label>
+              <input type="tel" id="callPhoneNumber" class="input-text" placeholder="e.g. +1 (555) 019-2831">
+            </div>
+          </div>
+          <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 0;">
+            <div class="form-field">
               <label class="form-label" for="callDuration">Call Duration</label>
               <select id="callDuration" class="input-text">
                 <option value="5 mins">5 mins (Quick Touchpoint)</option>
@@ -830,8 +842,6 @@
                 <option value="60 mins">60 mins (Contract Negotiation)</option>
               </select>
             </div>
-          </div>
-          <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
             <div class="form-field">
               <label class="form-label" for="callOutcome">Call Outcome *</label>
               <select id="callOutcome" class="input-text">
@@ -844,7 +854,7 @@
             </div>
             <div class="form-field">
               <label class="form-label" for="callFollowUp">Follow-up Date</label>
-              <input type="text" id="callFollowUp" class="input-text" placeholder="e.g. Tomorrow 10 AM, Sep 18">
+              <input type="text" id="callFollowUp" class="input-text" placeholder="e.g. Tomorrow 10 AM">
             </div>
           </div>
           <div class="call-wave-wrap">
@@ -936,7 +946,7 @@
           <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
             <div class="form-field">
               <label class="form-label" for="meetingTargetDeal">Related Opportunity</label>
-              <select id="meetingTargetDeal" class="input-text"></select>
+              <select id="meetingTargetDeal" class="input-text" onchange="syncMeetingContact(this.value)"></select>
             </div>
             <div class="form-field">
               <label class="form-label" for="meetingLocation">Meeting Platform</label>
@@ -946,6 +956,16 @@
                 <option value="On-Site Client Office">On-Site Client Office</option>
                 <option value="Phone Bridge">Phone Bridge</option>
               </select>
+            </div>
+          </div>
+          <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+            <div class="form-field">
+              <label class="form-label" for="meetingAttendee">Attendee Contact Name</label>
+              <input type="text" id="meetingAttendee" class="input-text" placeholder="e.g. Jane Smith">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="meetingContactPhone">Contact Number / Phone</label>
+              <input type="tel" id="meetingContactPhone" class="input-text" placeholder="e.g. +1 (555) 019-2831">
             </div>
           </div>
           <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
@@ -1060,12 +1080,12 @@
         <div class="csv-drop-zone" onclick="document.getElementById('csvTextInput').focus();">
           <div style="font-size:24px;margin-bottom:4px;">📥</div>
           <div style="font-size:13px;font-weight:600;color:var(--text);">Paste CSV data below</div>
-          <div style="font-size:11px;color:var(--text-muted);">Format: Company, Value, Stage, Contact, Email, Category</div>
+          <div style="font-size:11px;color:var(--text-muted);">Format: Company, Value, Stage, Contact, Email, Category, Phone</div>
         </div>
 
         <div class="form-field">
           <label class="form-label" for="csvTextInput">CSV Data Rows</label>
-          <textarea id="csvTextInput" class="note-area" style="min-height:100px;font-family:monospace;font-size:12px;" placeholder="Nexus Dynamics, 85000, Proposal Sent, Alex Mercer, alex@nexus.io, Enterprise Tech&#10;Vortex Systems, 120000, Contacted, Laura Vance, laura@vortex.com, Cloud Infrastructure" oninput="parseCsvInput()"></textarea>
+          <textarea id="csvTextInput" class="note-area" style="min-height:100px;font-family:monospace;font-size:12px;" placeholder="Nexus Dynamics, 85000, Proposal Sent, Alex Mercer, alex@nexus.io, Enterprise Tech, +1 (555) 019-2831&#10;Vortex Systems, 120000, Contacted, Laura Vance, laura@vortex.com, Cloud Infrastructure, +1 (555) 234-5678" oninput="parseCsvInput()"></textarea>
         </div>
 
         <div id="csvPreviewContainer" style="margin-top:12px;"></div>
@@ -1221,17 +1241,17 @@
     </button>
   </nav>
 
-  <script src="js/data.js?v=11.0"></script>
-  <script src="js/utils.js?v=11.0"></script>
-  <script src="js/sound.js?v=11.0"></script>
-  <script src="js/ai.js?v=11.0"></script>
-  <script src="js/quote.js?v=11.0"></script>
-  <script src="js/automation.js?v=11.0"></script>
-  <script src="js/motion.js?v=11.0"></script>
-  <script src="js/commands.js?v=11.0"></script>
-  <script src="js/pipeline.js?v=11.0"></script>
-  <script src="js/modules.js?v=11.0"></script>
-  <script src="js/chatbot.js?v=11.0"></script>
-  <script src="js/app.js?v=11.0"></script>
+  <script src="js/data.js?v=12.0"></script>
+  <script src="js/utils.js?v=12.0"></script>
+  <script src="js/sound.js?v=12.0"></script>
+  <script src="js/ai.js?v=12.0"></script>
+  <script src="js/quote.js?v=12.0"></script>
+  <script src="js/automation.js?v=12.0"></script>
+  <script src="js/motion.js?v=12.0"></script>
+  <script src="js/commands.js?v=12.0"></script>
+  <script src="js/pipeline.js?v=12.0"></script>
+  <script src="js/modules.js?v=12.0"></script>
+  <script src="js/chatbot.js?v=12.0"></script>
+  <script src="js/app.js?v=12.0"></script>
 </body>
 </html>

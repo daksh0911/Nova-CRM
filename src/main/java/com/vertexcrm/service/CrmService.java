@@ -84,7 +84,7 @@ public class CrmService {
                 req.name,
                 (req.industry == null || req.industry.isBlank()) ? "General" : req.industry,
                 req.email,
-                "+1 (555) 234-5678",
+                (req.phone == null || req.phone.isBlank()) ? "+1 (555) 234-5678" : req.phone,
                 (req.location == null || req.location.isBlank()) ? "Remote" : req.location,
                 owner,
                 "Just Now",
@@ -199,6 +199,7 @@ public class CrmService {
         User user = new User(
                 req.name,
                 req.email,
+                (req.phone == null || req.phone.isBlank()) ? "+1 (555) 000-0000" : req.phone,
                 (req.role == null || req.role.isBlank()) ? "Team Member" : req.role,
                 (req.dept == null || req.dept.isBlank()) ? "Operations" : req.dept,
                 0,

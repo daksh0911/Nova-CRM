@@ -26,9 +26,9 @@ const EXCHANGE_RATES = {
 };
 
 let users = [
-  { name: 'Admin User', email: 'admin@novacrm.com', role: 'System Administrator', dept: 'Operations', accountsCount: 1, dealsCount: 1 },
-  { name: 'Sarah Sales', email: 's.sales@novacrm.com', role: 'Enterprise Sales Rep', dept: 'Revenue', accountsCount: 3, dealsCount: 3 },
-  { name: 'Daksh Patel', email: 'daksh@novacrm.com', role: 'Senior Account Manager', dept: 'Client Growth', accountsCount: 4, dealsCount: 5 },
+  { name: 'Admin User', email: 'admin@novacrm.com', phone: '+1 (555) 000-0001', role: 'System Administrator', dept: 'Operations', accountsCount: 1, dealsCount: 1 },
+  { name: 'Sarah Sales', email: 's.sales@novacrm.com', phone: '+1 (555) 222-3333', role: 'Enterprise Sales Rep', dept: 'Revenue', accountsCount: 3, dealsCount: 3 },
+  { name: 'Daksh Patel', email: 'daksh@novacrm.com', phone: '+91 98765 00000', role: 'Senior Account Manager', dept: 'Client Growth', accountsCount: 4, dealsCount: 5 },
 ];
 
 let clients = [

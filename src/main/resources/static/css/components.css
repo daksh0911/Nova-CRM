@@ -90,7 +90,7 @@
 }
 .account-form-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1.2fr 1fr auto;
+  grid-template-columns: 1.2fr 1fr 1.2fr 1fr 1fr auto;
   gap: 14px;
   align-items: flex-end;
 }
@@ -149,7 +149,18 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(20, 184, 166, 0.25);
 }
-@media (max-width: 1080px) {
+@media (max-width: 1200px) {
+  .account-form-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .account-form-grid .form-field-btn {
+    grid-column: 1 / -1;
+  }
+  .account-submit-btn {
+    width: 100%;
+  }
+}
+@media (max-width: 800px) {
   .account-form-grid {
     grid-template-columns: 1fr 1fr;
   }

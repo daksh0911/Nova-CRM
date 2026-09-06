@@ -155,15 +155,15 @@ function globalSearch(query) {
   if (!results) return;
   if (!q) { results.style.display = 'none'; results.innerHTML = ''; return; }
 
-  const clientMatches = clients.filter(c => c.name.toLowerCase().includes(q) || (c.industry && c.industry.toLowerCase().includes(q))).slice(0, 4);
-  const leadMatches = leads.filter(l => l.name.toLowerCase().includes(q) || (l.tag && l.tag.toLowerCase().includes(q))).slice(0, 4);
+  const clientMatches = clients.filter(c => c.name.toLowerCase().includes(q) || (c.industry && c.industry.toLowerCase().includes(q)) || (c.phone && c.phone.includes(q)) || (c.email && c.email.toLowerCase().includes(q))).slice(0, 4);
+  const leadMatches = leads.filter(l => l.name.toLowerCase().includes(q) || (l.tag && l.tag.toLowerCase().includes(q)) || (l.phone && l.phone.includes(q)) || (l.contact && l.contact.toLowerCase().includes(q))).slice(0, 4);
 
   if (clientMatches.length === 0 && leadMatches.length === 0) {
     results.innerHTML = '<div style="padding:14px;color:var(--text-muted);font-size:13px;">No matches found for "' + query + '". Press ⌘K for full commands.</div>';
   } else {
     results.innerHTML =
-      clientMatches.map(c => '<div class="search-result-row" onclick="switchView(\'accounts\'); document.getElementById(\'globalSearchResults\').style.display=\'none\';"><span style="color:var(--accent);">🏢</span><span style="font-weight:600;">' + c.name + '</span><span style="font-size:12px;color:var(--text-muted);margin-left:4px;">(' + c.industry + ')</span><span style="margin-left:auto;color:var(--text-muted);font-size:11px;background:var(--bg-hover);padding:2px 6px;border-radius:4px;">Account</span></div>').join('') +
-      leadMatches.map(l => '<div class="search-result-row" onclick="openDealDetails(\'' + l.id + '\'); document.getElementById(\'globalSearchResults\').style.display=\'none\';"><span style="color:var(--green);">💼</span><span style="font-weight:600;">' + l.name + '</span><span style="font-size:12px;color:var(--text-muted);margin-left:4px;">(' + money(l.value) + ')</span><span style="margin-left:auto;color:var(--text-muted);font-size:11px;background:var(--bg-hover);padding:2px 6px;border-radius:4px;">Deal</span></div>').join('');
+      clientMatches.map(c => '<div class="search-result-row" onclick="switchView(\'accounts\'); document.getElementById(\'globalSearchResults\').style.display=\'none\';"><span style="color:var(--accent);">🏢</span><span style="font-weight:600;">' + c.name + '</span><span style="font-size:12px;color:var(--text-muted);margin-left:4px;">(' + (c.phone || c.industry) + ')</span><span style="margin-left:auto;color:var(--text-muted);font-size:11px;background:var(--bg-hover);padding:2px 6px;border-radius:4px;">Account</span></div>').join('') +
+      leadMatches.map(l => '<div class="search-result-row" onclick="openDealDetails(\'' + l.id + '\'); document.getElementById(\'globalSearchResults\').style.display=\'none\';"><span style="color:var(--green);">💼</span><span style="font-weight:600;">' + l.name + '</span><span style="font-size:12px;color:var(--text-muted);margin-left:4px;">(' + (l.phone || money(l.value)) + ')</span><span style="margin-left:auto;color:var(--text-muted);font-size:11px;background:var(--bg-hover);padding:2px 6px;border-radius:4px;">Deal</span></div>').join('');
   }
   results.style.display = 'block';
 }

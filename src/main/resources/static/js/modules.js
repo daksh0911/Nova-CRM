@@ -16,10 +16,24 @@ function populateDealDropdown(selectId, defaultLeadId = '') {
 }
 
 // Call Logger
+function syncCallContact(leadId) {
+  const lead = leads.find(l => l.id === leadId);
+  const phoneInput = document.getElementById('callPhoneNumber');
+  if (phoneInput) {
+    phoneInput.value = (lead && lead.phone) ? lead.phone : '';
+  }
+}
+
 function openCallLogModal(leadId = '') {
   const modal = document.getElementById('callLogModal');
   if (!modal) return;
-  populateDealDropdown('callTargetLead', leadId || (leads[0] ? leads[0].id : ''));
+  const initialId = leadId || (leads[0] ? leads[0].id : '');
+  populateDealDropdown('callTargetLead', initialId);
+  const selectEl = document.getElementById('callTargetLead');
+  if (selectEl) {
+    selectEl.onchange = (e) => syncCallContact(e.target.value);
+  }
+  syncCallContact(initialId);
   modal.classList.add('open');
   if (typeof renderCallWaveform === 'function') {
     setTimeout(() => renderCallWaveform('callWaveformCanvas'), 50);
@@ -37,13 +51,14 @@ function closeCallLogModal() {
 function submitCallLog() {
   const targetId = document.getElementById('callTargetLead')?.value;
   const lead = leads.find(l => l.id === targetId) || { name: 'Client Account', contact: 'Lead' };
+  const dialedPhone = (document.getElementById('callPhoneNumber')?.value || '').trim() || lead.phone || '';
   const duration = document.getElementById('callDuration')?.value || '15 mins';
   const outcome = document.getElementById('callOutcome')?.value || 'Connected & Interested';
   const notes = (document.getElementById('callNotes')?.value || '').trim();
 
   addAuditLog({
     category: 'COMMUNICATIONS',
-    action: 'logged call with ' + lead.name + ' (' + duration + ' · ' + outcome + ').',
+    action: 'logged call with ' + lead.name + (dialedPhone ? ' (' + dialedPhone + ')' : '') + ' (' + duration + ' · ' + outcome + ').',
     target: lead.contact,
     icon: '📞'
   });
@@ -54,8 +69,8 @@ function submitCallLog() {
       type: 'call',
       sender: activeUserName,
       company: lead.name,
-      subject: 'Call Log: ' + outcome + ' (' + duration + ')',
-      preview: notes || 'Call logged with ' + lead.contact,
+      subject: 'Call Log: ' + outcome + ' (' + duration + (dialedPhone ? ' · ' + dialedPhone : '') + ')',
+      preview: notes || 'Call logged with ' + lead.contact + (dialedPhone ? ' at ' + dialedPhone : ''),
       time: 'Just now',
       unread: false,
       leadId: lead.id
@@ -135,10 +150,20 @@ function submitSendEmail() {
 }
 
 // Meeting Scheduler
+function syncMeetingContact(leadId) {
+  const lead = leads.find(l => l.id === leadId);
+  const attendeeInput = document.getElementById('meetingAttendee');
+  const phoneInput = document.getElementById('meetingContactPhone');
+  if (attendeeInput && lead) attendeeInput.value = lead.contact || '';
+  if (phoneInput && lead) phoneInput.value = lead.phone || '';
+}
+
 function openMeetingModal(leadId = '') {
   const modal = document.getElementById('meetingModal');
   if (!modal) return;
-  populateDealDropdown('meetingTargetDeal', leadId || (leads[0] ? leads[0].id : ''));
+  const initialId = leadId || (leads[0] ? leads[0].id : '');
+  populateDealDropdown('meetingTargetDeal', initialId);
+  syncMeetingContact(initialId);
   modal.classList.add('open');
 }
 
@@ -152,14 +177,17 @@ function submitMeetingSchedule() {
   const date = document.getElementById('meetingDate')?.value;
   const targetId = document.getElementById('meetingTargetDeal')?.value;
   const lead = leads.find(l => l.id === targetId) || { name: 'Client' };
+  const attendee = (document.getElementById('meetingAttendee')?.value || '').trim() || lead.contact || 'Client';
+  const phone = (document.getElementById('meetingContactPhone')?.value || '').trim() || lead.phone || '';
+  const contactInfo = phone ? (attendee + ' · ' + phone) : attendee;
 
   if (!userSpecificData[activeUserName]) userSpecificData[activeUserName] = { tasks: [] };
   userSpecificData[activeUserName].tasks = userSpecificData[activeUserName].tasks || [];
-  userSpecificData[activeUserName].tasks.unshift('📅 Meeting: ' + title + ' (' + lead.name + ' · ' + date + ')');
+  userSpecificData[activeUserName].tasks.unshift('📅 Meeting: ' + title + ' (' + lead.name + ' · ' + contactInfo + ' · ' + date + ')');
 
   addAuditLog({
     category: 'COMMUNICATIONS',
-    action: 'scheduled meeting: ' + title + ' with ' + lead.name + '.',
+    action: 'scheduled meeting: ' + title + ' with ' + lead.name + (phone ? ' (' + phone + ')' : '') + '.',
     target: date,
     icon: '📅'
   });
@@ -171,7 +199,7 @@ function submitMeetingSchedule() {
       sender: activeUserName,
       company: lead.name,
       subject: 'Scheduled: ' + title,
-      preview: 'Meeting set for ' + date + ' with ' + lead.contact,
+      preview: 'Meeting set for ' + date + ' with ' + contactInfo,
       time: 'Just now',
       unread: false,
       leadId: lead.id
@@ -211,7 +239,7 @@ function renderClients(list = clients) {
     const scoreClass = score >= 80 ? 'high' : score >= 60 ? 'medium' : 'low';
     const techPills = (c.techStack || []).slice(0, 2).map(t => '<span class="tag-tech">' + t + '</span>').join('');
 
-    return '<tr class="' + (isMine ? 'tr-highlighted' : '') + '"><td><div style="display:flex;align-items:center;gap:10px;"><div class="avatar-chip" style="width:34px;height:34px;font-size:12px;border-radius:var(--radius-sm);">' + initials(c.name) + '</div><div><strong style="color:var(--text);">' + c.name + '</strong>' + (isMine ? '<span class="badge-mini">Yours</span>' : '') + '<div class="list-subtitle">' + c.id + ' · ' + c.industry + ' · <span style="color:var(--green);font-weight:600;">' + (c.arrNum ? money(c.arrNum) : (c.arr || '$100k')) + '</span></div><div style="display:flex;gap:4px;margin-top:4px;">' + techPills + '</div></div></div></td><td><span class="health-score-pill ' + scoreClass + '">● ' + score + '%</span></td><td><span style="font-weight:500;">' + c.email + '</span><div class="list-subtitle">' + c.phone + '</div></td><td>' + c.location + '</td><td><div style="display:flex;align-items:center;gap:6px;"><span class="avatar-chip" style="width:22px;height:22px;font-size:9px;">' + initials(c.owner) + '</span><span>' + c.owner + '</span></div></td><td style="font-size:12px;color:var(--text-muted);">' + c.lastContact + '</td><td><span class="badge ' + statusBadgeClass(c.status) + '">' + c.status + '</span></td><td><div style="display:flex;gap:6px;"><button class="lead-details-btn" onclick="openClientDetails(\'' + c.id + '\')">360° ›</button><button class="btn btn-outline btn-sm" onclick="openCreateDealModal(); document.getElementById(\'modalDealName\').value=\'' + c.name.replace(/'/g, "\\'") + '\'; document.getElementById(\'modalDealContact\').value=\'' + c.email + '\';" title="Create deal for account">+</button></div></td></tr>';
+    return '<tr class="' + (isMine ? 'tr-highlighted' : '') + '"><td><div style="display:flex;align-items:center;gap:10px;"><div class="avatar-chip" style="width:34px;height:34px;font-size:12px;border-radius:var(--radius-sm);">' + initials(c.name) + '</div><div><strong style="color:var(--text);">' + c.name + '</strong>' + (isMine ? '<span class="badge-mini">Yours</span>' : '') + '<div class="list-subtitle">' + c.id + ' · ' + c.industry + ' · <span style="color:var(--green);font-weight:600;">' + (c.arrNum ? money(c.arrNum) : (c.arr || '$100k')) + '</span></div><div style="display:flex;gap:4px;margin-top:4px;">' + techPills + '</div></div></div></td><td><span class="health-score-pill ' + scoreClass + '">● ' + score + '%</span></td><td><span style="font-weight:500;">' + c.email + '</span><div class="list-subtitle">' + (c.phone ? '<a href="tel:' + c.phone + '" style="color:inherit;text-decoration:none;" title="Direct Call">📞 ' + c.phone + '</a>' : '—') + '</div></td><td>' + c.location + '</td><td><div style="display:flex;align-items:center;gap:6px;"><span class="avatar-chip" style="width:22px;height:22px;font-size:9px;">' + initials(c.owner) + '</span><span>' + c.owner + '</span></div></td><td style="font-size:12px;color:var(--text-muted);">' + c.lastContact + '</td><td><span class="badge ' + statusBadgeClass(c.status) + '">' + c.status + '</span></td><td><div style="display:flex;gap:6px;"><button class="lead-details-btn" onclick="openClientDetails(\'' + c.id + '\')">360° ›</button><button class="btn btn-outline btn-sm" onclick="openCreateDealModal(); document.getElementById(\'modalDealName\').value=\'' + c.name.replace(/'/g, "\\'") + '\'; document.getElementById(\'modalDealContact\').value=\'' + c.email + '\';" title="Create deal for account">+</button></div></td></tr>';
   }).join('');
 
   renderHealthMatrix();
@@ -226,7 +254,7 @@ function openClientDetails(clientId) {
   const score = client.healthScore || (client.status === 'Active' ? 92 : 65);
   const techHtml = (client.techStack || ['AWS', 'Cloud', 'REST API']).map(t => '<span class="tag-tech">' + t + '</span>').join('');
   
-  modalBox.innerHTML = '<div class="deal-modal-header"><div><span class="tag">' + client.industry + '</span><h2 style="margin:8px 0 2px;font-size:20px;color:var(--text);">' + client.name + '</h2><div style="font-size:12px;color:var(--text-muted);">Account ID: ' + client.id + ' · Status: ' + client.status + '</div></div><button class="toast-close" onclick="closeDealDetails()" style="font-size:20px;">✕</button></div><div class="deal-modal-body"><div class="deal-modal-grid"><div class="deal-metric-card tilt-card-3d"><span>Annual ARR</span><strong style="color:var(--green);font-size:18px;">' + (client.arrNum ? money(client.arrNum) : client.arr) + '</strong></div><div class="deal-metric-card tilt-card-3d"><span>Health Index</span><strong style="color:var(--accent);font-size:18px;">' + score + '% Healthy</strong></div><div class="deal-metric-card tilt-card-3d"><span>Headquarters</span><strong style="font-size:14px;">' + client.location + '</strong></div><div class="deal-metric-card tilt-card-3d"><span>Last Contact</span><strong style="color:var(--violet);font-size:14px;">' + client.lastContact + '</strong></div></div><div style="margin:16px 0;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Firmographics & Intelligence</span><span style="font-size:11px;color:var(--accent);font-weight:600;">' + (client.funding || 'Growth') + ' · ' + (client.employees || '100+') + ' Employees</span></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">' + techHtml + '</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;"><div><span style="color:var(--text-muted);">Active Seats:</span> <strong>' + (client.seats || 50) + ' seats</strong></div><div><span style="color:var(--text-muted);">API Telemetry:</span> <strong>' + (client.apiUsage || '500k/mo') + '</strong></div></div></div><div style="margin:16px 0;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);"><div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;">Contact Point</div><div style="font-weight:600;color:var(--text);">' + client.email + '</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">' + client.phone + '</div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;"><button class="btn btn-sm" style="background:var(--red);color:#ffffff;border:none;padding:7px 14px;border-radius:var(--radius-sm);" onclick="deleteClient(\'' + client.id + '\')">Delete Account</button><div style="display:flex;gap:10px;"><button class="btn btn-outline btn-sm" onclick="closeDealDetails()">Close</button><button class="btn-primary btn-sm" onclick="closeDealDetails(); openCallLogModal();">📞 Log Call</button></div></div></div>';
+  modalBox.innerHTML = '<div class="deal-modal-header"><div><span class="tag">' + client.industry + '</span><h2 style="margin:8px 0 2px;font-size:20px;color:var(--text);">' + client.name + '</h2><div style="font-size:12px;color:var(--text-muted);">Account ID: ' + client.id + ' · Status: ' + client.status + '</div></div><button class="toast-close" onclick="closeDealDetails()" style="font-size:20px;">✕</button></div><div class="deal-modal-body"><div class="deal-modal-grid"><div class="deal-metric-card tilt-card-3d"><span>Annual ARR</span><strong style="color:var(--green);font-size:18px;">' + (client.arrNum ? money(client.arrNum) : client.arr) + '</strong></div><div class="deal-metric-card tilt-card-3d"><span>Health Index</span><strong style="color:var(--accent);font-size:18px;">' + score + '% Healthy</strong></div><div class="deal-metric-card tilt-card-3d"><span>Headquarters</span><strong style="font-size:14px;">' + client.location + '</strong></div><div class="deal-metric-card tilt-card-3d"><span>Last Contact</span><strong style="color:var(--violet);font-size:14px;">' + client.lastContact + '</strong></div></div><div style="margin:16px 0;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Firmographics & Intelligence</span><span style="font-size:11px;color:var(--accent);font-weight:600;">' + (client.funding || 'Growth') + ' · ' + (client.employees || '100+') + ' Employees</span></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">' + techHtml + '</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;"><div><span style="color:var(--text-muted);">Active Seats:</span> <strong>' + (client.seats || 50) + ' seats</strong></div><div><span style="color:var(--text-muted);">API Telemetry:</span> <strong>' + (client.apiUsage || '500k/mo') + '</strong></div></div></div><div style="margin:16px 0;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);"><div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;">Contact Point</div><div style="font-weight:600;color:var(--text);">' + client.email + '</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">' + (client.phone ? '<a href="tel:' + client.phone + '" style="color:var(--accent);font-weight:600;text-decoration:none;">📞 ' + client.phone + '</a>' : '—') + '</div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;"><button class="btn btn-sm" style="background:var(--red);color:#ffffff;border:none;padding:7px 14px;border-radius:var(--radius-sm);" onclick="deleteClient(\'' + client.id + '\')">Delete Account</button><div style="display:flex;gap:10px;"><button class="btn btn-outline btn-sm" onclick="closeDealDetails()">Close</button><button class="btn-primary btn-sm" onclick="closeDealDetails(); openCallLogModal();">📞 Log Call</button></div></div></div>';
 
   modalOverlay.classList.add('open');
   if (typeof init3DTiltPhysics === 'function') {
@@ -253,7 +281,7 @@ function filterClients() {
   const status = document.getElementById('clientStatusFilter') ? document.getElementById('clientStatusFilter').value : 'All';
   
   const filtered = clients.filter(c => {
-    const combined = (c.name + ' ' + c.email + ' ' + c.industry + ' ' + c.owner + ' ' + c.location).toLowerCase();
+    const combined = (c.name + ' ' + c.email + ' ' + (c.phone || '') + ' ' + c.industry + ' ' + c.owner + ' ' + c.location).toLowerCase();
     const matchesQuery = combined.includes(query);
     const matchesStatus = (status === 'All' || c.status === status);
     const matchesOwner = clientFilterMode === 'my' ? c.owner === activeUserName : true;
@@ -266,6 +294,7 @@ async function addClient() {
   const name = document.getElementById('clientName').value.trim();
   const industry = document.getElementById('clientIndustry').value.trim();
   const email = document.getElementById('clientEmail').value.trim();
+  const phone = (document.getElementById('clientPhone')?.value || '').trim() || '+1 (555) 234-5678';
   const location = document.getElementById('clientLocation').value.trim();
 
   if (isEmpty(name) || isEmpty(email)) {
@@ -277,6 +306,7 @@ async function addClient() {
     name,
     industry: isEmpty(industry) ? 'General' : industry,
     email,
+    phone,
     location: isEmpty(location) ? 'Remote' : location,
     owner: activeUserName,
     healthScore: 90
@@ -292,15 +322,15 @@ async function addClient() {
       const savedClient = await res.json();
       clients.unshift(savedClient);
     } else {
-      clients.unshift({ id: 'ACC-' + Math.floor(1000 + Math.random() * 9000), ...payload, phone: '+1 (555) 234-5678', lastContact: 'Just Now', status: 'Active', arr: '$100k ARR' });
+      clients.unshift({ id: 'ACC-' + Math.floor(1000 + Math.random() * 9000), ...payload, lastContact: 'Just Now', status: 'Active', arr: '$100k ARR' });
     }
   } catch (err) {
-    clients.unshift({ id: 'ACC-' + Math.floor(1000 + Math.random() * 9000), ...payload, phone: '+1 (555) 234-5678', lastContact: 'Just Now', status: 'Active', arr: '$100k ARR' });
+    clients.unshift({ id: 'ACC-' + Math.floor(1000 + Math.random() * 9000), ...payload, lastContact: 'Just Now', status: 'Active', arr: '$100k ARR' });
   }
 
   addAuditLog({ category: 'ACCOUNTS', action: 'registered corporate account \'' + name + '\'.', target: name, icon: '🏢' });
 
-  ['clientName', 'clientIndustry', 'clientEmail', 'clientLocation'].forEach(f => {
+  ['clientName', 'clientIndustry', 'clientEmail', 'clientPhone', 'clientLocation'].forEach(f => {
     const el = document.getElementById(f);
     if (el) el.value = '';
   });
@@ -391,7 +421,8 @@ function renderUsers() {
   const body = document.getElementById('userTableBody');
   if (!body) return;
   body.innerHTML = users.map(u => {
-    return '<tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="avatar-chip" style="width:32px;height:32px;font-size:11px;">' + initials(u.name) + '</div><div><strong style="color:var(--text);">' + u.name + '</strong><div class="list-subtitle">' + (u.dept || 'Workspace') + '</div></div></div></td><td>' + u.email + '</td><td><span class="badge badge-active">' + u.role + '</span></td><td><button class="btn-outline btn-sm" onclick="deleteUser(\'' + u.name + '\')">Revoke</button></td></tr>';
+    const phoneHtml = u.phone ? '<a href="tel:' + u.phone + '" style="color:inherit;text-decoration:none;" title="Direct Call">📞 ' + u.phone + '</a>' : '—';
+    return '<tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="avatar-chip" style="width:32px;height:32px;font-size:11px;">' + initials(u.name) + '</div><div><strong style="color:var(--text);">' + u.name + '</strong><div class="list-subtitle">' + (u.dept || 'Workspace') + '</div></div></div></td><td>' + u.email + '</td><td>' + phoneHtml + '</td><td><span class="badge badge-active">' + u.role + '</span></td><td><button class="btn-outline btn-sm" onclick="deleteUser(\'' + u.name + '\')">Revoke</button></td></tr>';
   }).join('');
 
   const switcher = document.getElementById('userSwitcherSelect');
@@ -403,13 +434,14 @@ function renderUsers() {
 async function addUser() {
   const name = document.getElementById('userName').value.trim();
   const email = document.getElementById('userEmail').value.trim();
+  const phone = (document.getElementById('userPhone')?.value || '').trim() || '+1 (555) 010-9988';
   const role = document.getElementById('userRole').value.trim();
   if (isEmpty(name) || isEmpty(email)) {
     showToast('Name and email are required.', '⚠️', 'error');
     return;
   }
   const userRole = isEmpty(role) ? 'Team Member' : role;
-  const payload = { name, email, role: userRole, dept: 'Operations' };
+  const payload = { name, email, phone, role: userRole, dept: 'Operations' };
 
   try {
     const res = await fetch(API_BASE + '/api/users', {
@@ -438,7 +470,7 @@ async function addUser() {
     ]
   };
   addAuditLog({ category: 'IDENTITY', action: 'granted workspace access to ' + name + '.', target: email, icon: '🔑' });
-  ['userName', 'userEmail', 'userRole'].forEach(f => {
+  ['userName', 'userEmail', 'userPhone', 'userRole'].forEach(f => {
     const el = document.getElementById(f);
     if (el) el.value = '';
   });
@@ -499,7 +531,8 @@ function renderTeam() {
   const grid = document.getElementById('teamPeopleGrid');
   if (!grid) return;
   grid.innerHTML = users.map(u => {
-    return '<div class="people-card tilt-card-3d"><div class="avatar-chip" style="width:56px;height:56px;font-size:18px;margin:0 auto 12px;border-radius:50%;">' + initials(u.name) + '</div><div class="people-name">' + u.name + '</div><div class="people-role">' + u.role + '</div><span class="people-card-dept">' + (u.dept || 'Operations') + '</span></div>';
+    const phoneLink = u.phone ? '<a href="tel:' + u.phone + '" style="margin-top:8px;display:inline-block;font-size:11px;color:var(--accent);text-decoration:none;font-weight:600;" title="Call member">📞 ' + u.phone + '</a>' : '';
+    return '<div class="people-card tilt-card-3d"><div class="avatar-chip" style="width:56px;height:56px;font-size:18px;margin:0 auto 12px;border-radius:50%;">' + initials(u.name) + '</div><div class="people-name">' + u.name + '</div><div class="people-role">' + u.role + '</div><span class="people-card-dept">' + (u.dept || 'Operations') + '</span>' + phoneLink + '</div>';
   }).join('');
   if (typeof init3DTiltPhysics === 'function') {
     setTimeout(init3DTiltPhysics, 60);
@@ -906,6 +939,7 @@ function parseCsvInput() {
       const contact = parts[3] || 'Executive Lead';
       const email = parts[4] || 'lead@company.com';
       const tag = parts[5] || 'Enterprise Tech';
+      const phone = (parts[6] || '').trim() || '+1 (555) 019-2831';
 
       rows.push({
         id: 'lead-imp-' + Math.floor(1000 + Math.random() * 9000),
@@ -914,7 +948,7 @@ function parseCsvInput() {
         stage: ['Lead In', 'Contacted', 'Proposal Sent', 'Closed Won'].includes(stage) ? stage : 'Lead In',
         contact,
         email,
-        phone: '+1 (555) 019-2831',
+        phone,
         tag,
         assigned: activeUserName,
         probability: 30,
@@ -930,7 +964,7 @@ function parseCsvInput() {
   parsedImportLeads = rows;
 
   if (rows.length === 0) {
-    preview.innerHTML = '<div style="padding:16px;text-align:center;color:var(--red);font-size:12px;">Could not parse rows. Format: Company, Value, Stage, Contact, Email</div>';
+    preview.innerHTML = '<div style="padding:16px;text-align:center;color:var(--red);font-size:12px;">Could not parse rows. Format: Company, Value, Stage, Contact, Email, Category, Phone</div>';
     return;
   }
 
@@ -938,9 +972,9 @@ function parseCsvInput() {
     <div style="font-size:12px;color:var(--green);font-weight:600;margin-bottom:8px;">✓ ${rows.length} opportunities ready for ingestion</div>
     <div style="max-height:160px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius-sm);">
       <table class="deal-products-table" style="font-size:12px;margin:0;">
-        <thead><tr><th>Company</th><th>Value</th><th>Stage</th><th>Contact</th></tr></thead>
+        <thead><tr><th>Company</th><th>Value</th><th>Stage</th><th>Contact</th><th>Phone</th></tr></thead>
         <tbody>
-          ${rows.map(r => `<tr><td><strong>${r.name}</strong></td><td>${money(r.value)}</td><td>${r.stage}</td><td>${r.contact}</td></tr>`).join('')}
+          ${rows.map(r => `<tr><td><strong>${r.name}</strong></td><td>${money(r.value)}</td><td>${r.stage}</td><td>${r.contact}</td><td><a href="tel:${r.phone}" style="color:var(--accent);text-decoration:none;">📞 ${r.phone}</a></td></tr>`).join('')}
         </tbody>
       </table>
     </div>
@@ -953,7 +987,14 @@ function submitCsvImport() {
     return;
   }
 
-  parsedImportLeads.forEach(lead => leads.unshift(lead));
+  parsedImportLeads.forEach(lead => {
+    leads.unshift(lead);
+    fetch(API_BASE + '/api/leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lead)
+    }).catch(() => {});
+  });
   const count = parsedImportLeads.length;
 
   if (typeof addAuditLog === 'function') {

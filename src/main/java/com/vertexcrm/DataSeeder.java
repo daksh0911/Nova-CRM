@@ -65,9 +65,9 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void seedUsers() {
-        userRepository.save(new User("Admin User", "admin@vertex.com", "System Administrator", "Operations", 1, 1));
-        userRepository.save(new User("Sarah Sales", "s.sales@vertex.com", "Enterprise Sales Rep", "Revenue", 3, 3));
-        userRepository.save(new User("Daksh Patel", "daksh@vertex.com", "Senior Account Manager", "Client Growth", 4, 5));
+        userRepository.save(new User("Admin User", "admin@vertex.com", "+1 (555) 000-0001", "System Administrator", "Operations", 1, 1));
+        userRepository.save(new User("Sarah Sales", "s.sales@vertex.com", "+1 (555) 222-3333", "Enterprise Sales Rep", "Revenue", 3, 3));
+        userRepository.save(new User("Daksh Patel", "daksh@vertex.com", "+91 98765 00000", "Senior Account Manager", "Client Growth", 4, 5));
     }
 
     private void seedClients() {

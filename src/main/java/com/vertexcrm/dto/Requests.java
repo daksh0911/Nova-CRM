@@ -6,6 +6,7 @@ public class Requests {
         public String name;
         public String industry;
         public String email;
+        public String phone;
         public String location;
         public String owner;
     }
@@ -33,6 +34,7 @@ public class Requests {
     public static class CreateUserRequest {
         public String name;
         public String email;
+        public String phone;
         public String role;
         public String dept;
     }

@@ -21,7 +21,7 @@ function openQuoteModal(leadId) {
 
   if (titleEl) titleEl.textContent = 'Executive Proposal Quote — ' + lead.name;
   if (clientEl) clientEl.textContent = lead.name;
-  if (contactEl) contactEl.textContent = lead.contact + ' (' + lead.email + ')';
+  if (contactEl) contactEl.textContent = lead.contact + ' (' + lead.email + (lead.phone ? ' · ' + lead.phone : '') + ')';
   if (quoteIdEl) quoteIdEl.textContent = 'PROPOSAL-QT-' + Math.floor(10000 + Math.random() * 90000);
 
   const discountSlider = document.getElementById('quoteDiscountSlider');

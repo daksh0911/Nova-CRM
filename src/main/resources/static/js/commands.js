@@ -65,21 +65,21 @@ function filterCommandPalette(query) {
   } else {
     matched = baseCommands.filter(c => c.title.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q));
 
-    leads.filter(l => l.name.toLowerCase().includes(q) || (l.tag && l.tag.toLowerCase().includes(q))).slice(0, 3).forEach(l => {
+    leads.filter(l => l.name.toLowerCase().includes(q) || (l.tag && l.tag.toLowerCase().includes(q)) || (l.phone && l.phone.includes(q)) || (l.contact && l.contact.toLowerCase().includes(q))).slice(0, 3).forEach(l => {
       matched.push({
         type: 'deal',
         title: l.name + ' (' + money(l.value) + ')',
-        desc: 'Deal · ' + l.stage + ' · Assigned to ' + l.assigned,
+        desc: 'Deal · ' + l.stage + (l.phone ? ' · 📞 ' + l.phone : '') + ' · Assigned to ' + l.assigned,
         icon: '💼',
         action: () => { closeCommandPalette(); openDealDetails(l.id); }
       });
     });
 
-    clients.filter(c => c.name.toLowerCase().includes(q) || (c.industry && c.industry.toLowerCase().includes(q))).slice(0, 3).forEach(c => {
+    clients.filter(c => c.name.toLowerCase().includes(q) || (c.industry && c.industry.toLowerCase().includes(q)) || (c.phone && c.phone.includes(q)) || (c.email && c.email.toLowerCase().includes(q))).slice(0, 3).forEach(c => {
       matched.push({
         type: 'client',
         title: c.name + ' (' + c.industry + ')',
-        desc: 'Account · ' + c.arr + ' · Owner: ' + c.owner,
+        desc: 'Account · ' + c.arr + (c.phone ? ' · 📞 ' + c.phone : '') + ' · Owner: ' + c.owner,
         icon: '🏢',
         action: () => { closeCommandPalette(); openClientDetails(c.id); }
       });
