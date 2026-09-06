@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/app.css?v=12.0">
+  <link rel="stylesheet" href="css/app.css?v=13.0">
 </head>
 
 <body>
@@ -357,9 +357,17 @@
         <!-- ═══ 2. PIPELINE ═══ -->
         <section id="view-pipeline" class="view-section">
           <div class="section-header pipeline-header">
-            <div>
-              <h1>Sales Pipeline</h1>
-              <p class="section-sub">Track and manage your deals across every stage.</p>
+            <div class="pipeline-title-wrap">
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <h1 id="pipelineActiveTitle" style="margin:0;">Sales Pipeline</h1>
+                <div class="pipeline-selector-group">
+                  <select class="input select pipeline-select" id="pipelineSelector" onchange="switchPipeline(this.value)" title="Select active pipeline"></select>
+                  <button class="btn btn-primary btn-sm" id="btnNewPipeline" onclick="openCreatePipelineModal()" title="Create New Pipeline">
+                    <span>+</span> New Pipeline
+                  </button>
+                </div>
+              </div>
+              <p class="section-sub" id="pipelineActiveSub" style="margin:4px 0 0 0;">Track and manage your deals across every stage.</p>
             </div>
             <div class="header-actions">
               <select class="input select select-sort" id="pipelineSortSelect" onchange="sortPipeline(this.value)" title="Sort Pipeline Deals">
@@ -375,40 +383,7 @@
             </div>
           </div>
 
-          <div class="pipeline-board">
-            <div class="stage" id="stage-prospect" ondrop="drop(event)" ondragover="allowDrop(event)">
-              <div class="stage-header">
-                <span class="stage-dot purple"></span>
-                <span class="stage-name">Lead In</span>
-                <span class="stage-count">0</span>
-                <button class="stage-quick-add-btn" onclick="openCreateDealModal('Lead In')" title="Add Lead In deal">+</button>
-              </div>
-            </div>
-            <div class="stage" id="stage-contacted" ondrop="drop(event)" ondragover="allowDrop(event)">
-              <div class="stage-header">
-                <span class="stage-dot blue"></span>
-                <span class="stage-name">Contacted</span>
-                <span class="stage-count">0</span>
-                <button class="stage-quick-add-btn" onclick="openCreateDealModal('Contacted')" title="Add Contacted deal">+</button>
-              </div>
-            </div>
-            <div class="stage" id="stage-proposal" ondrop="drop(event)" ondragover="allowDrop(event)">
-              <div class="stage-header">
-                <span class="stage-dot orange"></span>
-                <span class="stage-name">Proposal Sent</span>
-                <span class="stage-count">0</span>
-                <button class="stage-quick-add-btn" onclick="openCreateDealModal('Proposal Sent')" title="Add Proposal deal">+</button>
-              </div>
-            </div>
-            <div class="stage" id="stage-closed" ondrop="drop(event)" ondragover="allowDrop(event)">
-              <div class="stage-header">
-                <span class="stage-dot green"></span>
-                <span class="stage-name">Closed Won</span>
-                <span class="stage-count">0</span>
-                <button class="stage-quick-add-btn" onclick="openCreateDealModal('Closed Won')" title="Add Closed Won deal">+</button>
-              </div>
-            </div>
-          </div>
+          <div class="pipeline-board" id="pipelineBoardContainer"></div>
         </section>
 
         <!-- ═══ 3. ACCOUNTS ═══ -->
@@ -529,10 +504,13 @@
               <p class="section-sub" style="margin:0;">Real-time synchronized communications feed across emails, call logs, calendar meets, and AI signals.</p>
             </div>
             <div class="inbox-actions-header">
+              <button class="btn btn-primary btn-sm" onclick="openNewInboxMessageModal()">
+                <span>💬</span> New Message
+              </button>
               <button class="btn btn-outline btn-sm" onclick="openEmailModal()">
                 <span>✉️</span> Compose Email
               </button>
-              <button class="btn-primary btn-sm" onclick="openCallLogModal()">
+              <button class="btn btn-outline btn-sm" onclick="openCallLogModal()">
                 <span>📞</span> Log Touchpoint
               </button>
             </div>
@@ -1098,6 +1076,153 @@
     </div>
   </div>
 
+  <!-- Pipeline: Create New Pipeline Modal -->
+  <div class="modal-overlay" id="createPipelineModal" onclick="if(event.target===this) closeCreatePipelineModal()">
+    <div class="deal-modal-content" style="max-width:560px;">
+      <div class="deal-modal-header">
+        <div>
+          <span class="tag">REVENUE ARCHITECTURE</span>
+          <h2 style="margin:8px 0 2px;font-size:18px;color:var(--text);">Create New Pipeline</h2>
+          <div style="font-size:12px;color:var(--text-muted);">Set up custom sales, renewal, or partnership pipeline with dedicated stages</div>
+        </div>
+        <button class="toast-close" onclick="closeCreatePipelineModal()" style="font-size:20px;">✕</button>
+      </div>
+      <div class="deal-modal-body">
+        <form onsubmit="event.preventDefault(); submitCreatePipeline();" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="form-field">
+            <label class="form-label" for="pipelineName">Pipeline Name *</label>
+            <input type="text" id="pipelineName" class="input-text" placeholder="e.g. Enterprise Renewals, Strategic Partnerships" required autofocus>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="pipelineDescription">Pipeline Description / Focus</label>
+            <input type="text" id="pipelineDescription" class="input-text" placeholder="e.g. Manage recurring account expansions and renewals">
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="pipelineStagesInput">Pipeline Stages (comma-separated, in order) *</label>
+            <input type="text" id="pipelineStagesInput" class="input-text" value="Discovery, Scoping, Proposal Sent, Closed Won" placeholder="e.g. Discovery, Scoping, Proposal Sent, Closed Won" required>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Each comma-separated value becomes an interactive drag-and-drop column.</div>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:10px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeCreatePipelineModal()">Cancel</button>
+            <button type="submit" class="btn-primary btn-sm">📊 Create Pipeline</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline: Add Stage Modal -->
+  <div class="modal-overlay" id="addStageModal" onclick="if(event.target===this) closeAddStageModal()">
+    <div class="deal-modal-content" style="max-width:440px;">
+      <div class="deal-modal-header">
+        <div>
+          <span class="tag">PIPELINE STAGE</span>
+          <h2 style="margin:8px 0 2px;font-size:18px;color:var(--text);">Add Stage Column</h2>
+          <div style="font-size:12px;color:var(--text-muted);">Add a new operational stage to the active pipeline</div>
+        </div>
+        <button class="toast-close" onclick="closeAddStageModal()" style="font-size:20px;">✕</button>
+      </div>
+      <div class="deal-modal-body">
+        <form onsubmit="event.preventDefault(); submitAddStage();" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="form-field">
+            <label class="form-label" for="newStageName">Stage Name *</label>
+            <input type="text" id="newStageName" class="input-text" placeholder="e.g. Contract Negotiation, Tech Validation" required autofocus>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="newStageColor">Stage Accent Color</label>
+            <select id="newStageColor" class="input-text">
+              <option value="purple" selected>Purple</option>
+              <option value="blue">Blue</option>
+              <option value="orange">Orange</option>
+              <option value="green">Green</option>
+              <option value="amber">Amber / Yellow</option>
+              <option value="red">Red</option>
+            </select>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:10px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeAddStageModal()">Cancel</button>
+            <button type="submit" class="btn-primary btn-sm">+ Add Stage</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Communications: New Inbox Message Modal -->
+  <div class="modal-overlay" id="newInboxMessageModal" onclick="if(event.target===this) closeNewInboxMessageModal()">
+    <div class="deal-modal-content" style="max-width:560px;">
+      <div class="deal-modal-header">
+        <div>
+          <span class="tag">OMNICHANNEL FEED</span>
+          <h2 style="margin:8px 0 2px;font-size:18px;color:var(--text);">Create New Inbox Message</h2>
+          <div style="font-size:12px;color:var(--text-muted);">Dispatch inbound or outbound message, touchpoint note, or executive alert</div>
+        </div>
+        <button class="toast-close" onclick="closeNewInboxMessageModal()" style="font-size:20px;">✕</button>
+      </div>
+      <div class="deal-modal-body">
+        <form onsubmit="event.preventDefault(); submitNewInboxMessage();" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+            <div class="form-field">
+              <label class="form-label" for="inboxMsgType">Message Channel / Type *</label>
+              <select id="inboxMsgType" class="input-text">
+                <option value="message" selected>💬 Client Message / SMS</option>
+                <option value="email">✉️ Corporate Email</option>
+                <option value="call">📞 Phone Touchpoint Note</option>
+                <option value="meeting">📅 Meeting Memo</option>
+                <option value="system">🤖 AI Signal / System Alert</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="inboxTargetLead">Related Opportunity / Deal</label>
+              <select id="inboxTargetLead" class="input-text" onchange="syncInboxMessageContact(this.value)"></select>
+            </div>
+          </div>
+
+          <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+            <div class="form-field">
+              <label class="form-label" for="inboxSender">Sender / Client Contact *</label>
+              <input type="text" id="inboxSender" class="input-text" placeholder="e.g. Sarah Jenkins" required>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="inboxCompany">Company / Account *</label>
+              <input type="text" id="inboxCompany" class="input-text" placeholder="e.g. Quantum Dynamics" required>
+            </div>
+          </div>
+
+          <div class="deal-modal-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+            <div class="form-field">
+              <label class="form-label" for="inboxPhone">Contact Number / Phone</label>
+              <input type="tel" id="inboxPhone" class="input-text" placeholder="e.g. +1 (555) 456-7890">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="inboxSubject">Subject / Topic *</label>
+              <input type="text" id="inboxSubject" class="input-text" placeholder="e.g. Contract Signoff Status" required>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="inboxBody">Message Content *</label>
+            <textarea id="inboxBody" class="note-area" style="min-height:90px;" placeholder="Type communication note or incoming client message..." required></textarea>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+            <label style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="checkbox" id="inboxMarkUnread" checked style="accent-color:var(--accent);">
+              <span>Mark as unread in inbox feed</span>
+            </label>
+            <div style="display:flex;gap:10px;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="closeNewInboxMessageModal()">Cancel</button>
+              <button type="submit" class="btn-primary btn-sm">💬 Post to Inbox</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Keyboard Shortcuts Cheatsheet Modal -->
   <div class="modal-overlay" id="shortcutsModal" onclick="if(event.target===this) toggleShortcutsModal()">
     <div class="deal-modal-content" style="max-width:540px;">
@@ -1241,17 +1366,17 @@
     </button>
   </nav>
 
-  <script src="js/data.js?v=12.0"></script>
-  <script src="js/utils.js?v=12.0"></script>
-  <script src="js/sound.js?v=12.0"></script>
-  <script src="js/ai.js?v=12.0"></script>
-  <script src="js/quote.js?v=12.0"></script>
-  <script src="js/automation.js?v=12.0"></script>
-  <script src="js/motion.js?v=12.0"></script>
-  <script src="js/commands.js?v=12.0"></script>
-  <script src="js/pipeline.js?v=12.0"></script>
-  <script src="js/modules.js?v=12.0"></script>
-  <script src="js/chatbot.js?v=12.0"></script>
-  <script src="js/app.js?v=12.0"></script>
+  <script src="js/data.js?v=13.0"></script>
+  <script src="js/utils.js?v=13.0"></script>
+  <script src="js/sound.js?v=13.0"></script>
+  <script src="js/ai.js?v=13.0"></script>
+  <script src="js/quote.js?v=13.0"></script>
+  <script src="js/automation.js?v=13.0"></script>
+  <script src="js/motion.js?v=13.0"></script>
+  <script src="js/commands.js?v=13.0"></script>
+  <script src="js/pipeline.js?v=13.0"></script>
+  <script src="js/modules.js?v=13.0"></script>
+  <script src="js/chatbot.js?v=13.0"></script>
+  <script src="js/app.js?v=13.0"></script>
 </body>
 </html>

@@ -857,29 +857,35 @@ function renderInboxFeed(filterType = 'all') {
     return;
   }
 
-  const iconMap = { email: '✉️', call: '📞', meeting: '📅', system: '🤖' };
+  const iconMap = { email: '✉️', call: '📞', meeting: '📅', system: '🤖', message: '💬' };
 
   container.innerHTML = list.map(item => {
+    const phoneDisplay = item.phone 
+      ? ' · <a href="tel:' + item.phone + '" style="color:var(--accent);text-decoration:none;font-size:11px;font-weight:600;" onclick="event.stopPropagation();" title="Direct Dial">📞 ' + item.phone + '</a>' 
+      : '';
+
     return `
       <div class="inbox-card tilt-card-3d ${item.unread ? 'unread' : ''}" onclick="toggleInboxRead('${item.id}')">
         <div class="inbox-icon-wrap ${item.type}">${iconMap[item.type] || '💬'}</div>
         <div class="inbox-content">
           <div class="inbox-header-row">
             <div>
-              <strong style="color:var(--text);font-size:14px;">${item.sender}</strong>
-              <span class="list-subtitle" style="margin-left:6px;">· ${item.company}</span>
+              <strong style="color:var(--text);font-size:14px;">${escapeHtml(item.sender)}</strong>
+              <span class="list-subtitle" style="margin-left:6px;">· ${escapeHtml(item.company)}</span>
+              ${phoneDisplay}
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
               <span style="font-size:11px;color:var(--text-muted);">${item.time}</span>
               ${item.unread ? '<span class="unread-dot"></span>' : ''}
             </div>
           </div>
-          <div class="inbox-subject">${item.subject}</div>
-          <div class="inbox-preview">${item.preview}</div>
+          <div class="inbox-subject">${escapeHtml(item.subject)}</div>
+          <div class="inbox-preview">${escapeHtml(item.preview)}</div>
         </div>
         <div class="inbox-actions" onclick="event.stopPropagation();">
           ${item.leadId ? `<button class="btn btn-outline btn-sm" onclick="openDealDetails('${item.leadId}')">Deal ›</button>` : ''}
           <button class="btn-ghost" onclick="toggleInboxRead('${item.id}')" title="Toggle read">${item.unread ? '✓ Mark Read' : 'Unread'}</button>
+          <button class="btn-ghost" style="color:var(--red);padding:4px 8px;font-size:12px;" onclick="deleteInboxMessage('${item.id}')" title="Delete message">🗑️</button>
         </div>
       </div>
     `;
@@ -895,6 +901,134 @@ function toggleInboxRead(id) {
   msg.unread = !msg.unread;
   saveLocalState();
   renderInboxFeed();
+}
+
+function deleteInboxMessage(id) {
+  const msg = (inboxFeed || []).find(m => m.id === id);
+  if (!msg) return;
+  if (!confirm("Delete message '" + msg.subject + "' from inbox feed?")) return;
+  inboxFeed = inboxFeed.filter(m => m.id !== id);
+  saveLocalState();
+  renderInboxFeed();
+  if (typeof addAuditLog === 'function') {
+    addAuditLog({ category: 'INBOX', action: "deleted inbox message '" + msg.subject + "'.", target: id, icon: '🗑️' });
+  }
+  showToast('Message removed from inbox', '🗑️', 'info');
+}
+
+function openNewInboxMessageModal(leadId) {
+  const modal = document.getElementById('newInboxMessageModal');
+  if (!modal) return;
+
+  const leadSelect = document.getElementById('inboxTargetLead');
+  if (leadSelect) {
+    let opts = '<option value="">-- No Related Opportunity / General --</option>';
+    if (Array.isArray(leads)) {
+      opts += leads.map(l => {
+        const isSel = leadId && String(l.id) === String(leadId);
+        return '<option value="' + l.id + '" ' + (isSel ? 'selected' : '') + '>' + escapeHtml(l.name) + ' (' + (escapeHtml(l.contact) || 'Executive') + ')</option>';
+      }).join('');
+    }
+    leadSelect.innerHTML = opts;
+  }
+
+  if (leadId) {
+    syncInboxMessageContact(leadId);
+  } else {
+    const sender = document.getElementById('inboxSender');
+    const company = document.getElementById('inboxCompany');
+    const phone = document.getElementById('inboxPhone');
+    const subject = document.getElementById('inboxSubject');
+    const body = document.getElementById('inboxBody');
+    if (sender) sender.value = '';
+    if (company) company.value = '';
+    if (phone) phone.value = '';
+    if (subject) subject.value = '';
+    if (body) body.value = '';
+  }
+
+  modal.classList.add('open');
+  setTimeout(() => {
+    const subjInput = document.getElementById('inboxSubject');
+    if (subjInput) subjInput.focus();
+  }, 60);
+}
+
+function closeNewInboxMessageModal() {
+  const modal = document.getElementById('newInboxMessageModal');
+  if (modal) modal.classList.remove('open');
+}
+
+function syncInboxMessageContact(leadId) {
+  if (!leadId) return;
+  const lead = Array.isArray(leads) ? leads.find(l => String(l.id) === String(leadId)) : null;
+  if (!lead) return;
+
+  const senderInput = document.getElementById('inboxSender');
+  const companyInput = document.getElementById('inboxCompany');
+  const phoneInput = document.getElementById('inboxPhone');
+
+  if (senderInput) senderInput.value = lead.contact || '';
+  if (companyInput) companyInput.value = lead.name || '';
+  if (phoneInput) phoneInput.value = lead.phone || '';
+}
+
+function submitNewInboxMessage() {
+  const type = document.getElementById('inboxMsgType')?.value || 'message';
+  const leadId = document.getElementById('inboxTargetLead')?.value || null;
+  const sender = (document.getElementById('inboxSender')?.value || '').trim();
+  const company = (document.getElementById('inboxCompany')?.value || '').trim();
+  const phone = (document.getElementById('inboxPhone')?.value || '').trim();
+  const subject = (document.getElementById('inboxSubject')?.value || '').trim();
+  const body = (document.getElementById('inboxBody')?.value || '').trim();
+  const unread = document.getElementById('inboxMarkUnread')?.checked ?? true;
+
+  if (!sender) {
+    showToast('Please specify a sender or client contact.', '⚠️', 'warning');
+    return;
+  }
+  if (!company) {
+    showToast('Please specify a company / account name.', '⚠️', 'warning');
+    return;
+  }
+  if (!subject) {
+    showToast('Please specify a message subject or topic.', '⚠️', 'warning');
+    return;
+  }
+  if (!body) {
+    showToast('Please enter message content.', '⚠️', 'warning');
+    return;
+  }
+
+  const newMsg = {
+    id: 'msg-' + Date.now(),
+    type,
+    sender,
+    company,
+    phone,
+    subject,
+    preview: body,
+    time: 'Just now',
+    unread,
+    leadId: leadId || null
+  };
+
+  if (!Array.isArray(inboxFeed)) inboxFeed = [];
+  inboxFeed.unshift(newMsg);
+  saveLocalState();
+
+  if (typeof addAuditLog === 'function') {
+    addAuditLog({
+      category: 'INBOX',
+      action: "posted new " + type + " from '" + sender + "' (" + company + ").",
+      target: newMsg.id,
+      icon: '💬'
+    });
+  }
+
+  closeNewInboxMessageModal();
+  renderInboxFeed();
+  showToast('New message posted to Unified Inbox!', '💬', 'success');
 }
 
 // --------------------------------------------------------

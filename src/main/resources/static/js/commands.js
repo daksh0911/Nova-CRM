@@ -27,6 +27,9 @@ function getCommandRegistry() {
   return [
     { type: 'action', title: 'Open Nova AI Copilot', desc: 'Ask CRM intelligence, get deal insights, and automate tasks', icon: '🤖', action: () => { closeCommandPalette(); if (typeof toggleChatbot === 'function') toggleChatbot(true); } },
     { type: 'action', title: 'Create New Deal', desc: 'Add a new opportunity into the sales pipeline', icon: '⚡', action: () => { closeCommandPalette(); openCreateDealModal(); } },
+    { type: 'action', title: 'Create New Pipeline', desc: 'Set up custom sales, renewal, or partner pipeline', icon: '📊', action: () => { closeCommandPalette(); switchView('pipeline'); openCreatePipelineModal(); } },
+    { type: 'action', title: 'Add Pipeline Stage Column', desc: 'Add a custom stage to the active pipeline', icon: '➕', action: () => { closeCommandPalette(); switchView('pipeline'); openAddStageModal(); } },
+    { type: 'action', title: 'Post New Inbox Message', desc: 'Dispatch or record client message, note, or alert', icon: '💬', action: () => { closeCommandPalette(); openNewInboxMessageModal(); } },
     { type: 'action', title: 'Proposal Quote Studio', desc: 'Generate and sign interactive quote', icon: '📄', action: () => { closeCommandPalette(); if (leads[0]) openQuoteModal(leads[0].id); else openCreateDealModal(); } },
     { type: 'action', title: 'Import Data via CSV', desc: 'Bulk ingest opportunities from CSV or spreadsheet', icon: '📥', action: () => { closeCommandPalette(); openCsvImportModal(); } },
     { type: 'action', title: 'Log Client Call', desc: 'Record a phone call interaction with waveform', icon: '📞', action: () => { closeCommandPalette(); openCallLogModal(); } },

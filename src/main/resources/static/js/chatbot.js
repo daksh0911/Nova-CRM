@@ -23,7 +23,9 @@ const ALL_QUESTIONS = [
   { icon: '📥', q: 'How do I export data or download CSV reports?' },
   { icon: '💡', q: 'What is the enterprise sales closing playbook?' },
   { icon: '🔇', q: 'Why are sound effects disabled in NovaCRM?' },
-  { icon: '📱', q: 'How does the mobile version work?' }
+  { icon: '📱', q: 'How does the mobile version work?' },
+  { icon: '📊', q: 'How do I create a new pipeline or add stages?' },
+  { icon: '💬', q: 'How do I create or post a new inbox message?' }
 ];
 
 function toggleChatbot(forceState) {
@@ -519,10 +521,46 @@ function processNovaIntelligence(rawQuery) {
     }
   }
 
+  // New Pipeline & Stages
+  if (has('new pipeline', 'create pipeline', 'add pipeline', 'stages', 'add stage', 'stage column', 'multiple pipeline', 'switch pipeline')) {
+    const pipeCount = Array.isArray(pipelines) ? pipelines.length : 1;
+    return {
+      text: '📊 <strong>Multi-Pipeline & Dynamic Stages Architecture</strong>:<br><br>' +
+        '• <strong>Switch Pipelines:</strong> Use the dropdown selector in the Pipeline header to switch between <em>Sales Pipeline</em>, <em>Renewals & Expansion</em>, and <em>Strategic Partnerships</em>.<br>' +
+        '• <strong>Create New Pipeline:</strong> Click <code>+ New Pipeline</code> (or press <kbd>⌘K</kbd> -> "Create New Pipeline") to create custom pipelines with tailored sequential stages.<br>' +
+        '• <strong>Add Custom Stage Columns:</strong> In the active pipeline board, scroll to the right and click <code>+ Add Stage</code> to append a custom stage with your preferred color dot.<br>' +
+        '• <strong>State Persistence:</strong> All custom pipelines and stages are automatically stored and persisted in localStorage.<br>' +
+        '• Currently tracking <strong>' + pipeCount + ' active pipelines</strong>.',
+      attachment: '<div class="ai-card-attachment">' +
+        '<div class="ai-card-title"><span>Pipeline Actions</span></div>' +
+        '<div class="ai-action-btn-row">' +
+        '<button class="ai-action-btn" onclick="switchView(\'pipeline\'); openCreatePipelineModal(); toggleChatbot(false);">➕ Create New Pipeline</button>' +
+        '<button class="ai-action-btn" onclick="switchView(\'pipeline\'); openAddStageModal(); toggleChatbot(false);">➕ Add Stage Column</button>' +
+        '</div></div>'
+    };
+  }
+
+  // New Inbox Message
+  if (has('new inbox', 'new message', 'create message', 'post message', 'add message', 'inbox message', 'send message', 'omnichannel message')) {
+    return {
+      text: '💬 <strong>Omnichannel Unified Inbox & Message Dispatch</strong>:<br><br>' +
+        '• <strong>Compose & Dispatch:</strong> Click <code>💬 New Message</code> in the Inbox header (or use <kbd>⌘K</kbd> -> "Post New Inbox Message").<br>' +
+        '• <strong>Multi-Channel Types:</strong> Post Client Messages/SMS (💬), Corporate Emails (✉️), Phone Touchpoint Notes (📞), Meeting Memos (📅), or AI Signals (🤖).<br>' +
+        '• <strong>Deal & Contact Association:</strong> Select any related opportunity to auto-fill contact name, company, and phone number with one-click direct dialing (<a href="tel:..." style="color:var(--accent);text-decoration:none;">📞</a>).<br>' +
+        '• <strong>Immediate Sync:</strong> New messages appear instantly at the top of your feed with unread indicators and deletion controls.',
+      attachment: '<div class="ai-card-attachment">' +
+        '<div class="ai-card-title"><span>Inbox Actions</span></div>' +
+        '<div class="ai-action-btn-row">' +
+        '<button class="ai-action-btn" onclick="switchView(\'inbox\'); openNewInboxMessageModal(); toggleChatbot(false);">💬 Compose New Message</button>' +
+        '<button class="ai-action-btn" onclick="switchView(\'inbox\'); toggleChatbot(false);">📬 View Inbox Feed</button>' +
+        '</div></div>'
+    };
+  }
+
   // Default Fallback
   return {
     text: 'I analyzed your question: "<em>' + escapeHtml(rawQuery) + '</em>".<br><br>' +
-      'NovaCRM is an enterprise sales platform with an embedded H2 database, 4-stage pipeline, eye-care themes, and automated workflow rules. You can select any question on screen or ask anything specific!'
+      'NovaCRM is an enterprise sales platform with an embedded H2 database, multi-pipeline architecture, omnichannel inbox, eye-care themes, and automated workflow rules. You can select any question on screen or ask anything specific!'
   };
 }
 

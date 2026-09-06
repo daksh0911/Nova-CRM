@@ -3,6 +3,7 @@
    Centralized store with multi-currency, firmographics & automations
    ══════════════════════════════════════════ */
 let activeUserName = 'Daksh Patel';
+let activePipelineId = 'pipe-sales';
 let pipelineFilterMode = 'all'; // 'all' or 'my'
 let pipelineSortMode = 'value-desc';
 let clientFilterMode = 'all';   // 'all' or 'my'
@@ -10,6 +11,42 @@ let selectedQuarter = 'Q3';
 let currentCurrency = 'USD';
 let nextLeadNumber = 10;
 let logs = [];
+
+let pipelines = [
+  {
+    id: 'pipe-sales',
+    name: 'Sales Pipeline',
+    description: 'Track and manage core enterprise deals across every stage.',
+    stages: [
+      { name: 'Lead In', color: 'purple' },
+      { name: 'Contacted', color: 'blue' },
+      { name: 'Proposal Sent', color: 'orange' },
+      { name: 'Closed Won', color: 'green' }
+    ]
+  },
+  {
+    id: 'pipe-renewals',
+    name: 'Renewals & Expansion',
+    description: 'Track account retention, contract renewals, and upsell expansions.',
+    stages: [
+      { name: 'Account Review', color: 'purple' },
+      { name: 'Upsell Scoped', color: 'blue' },
+      { name: 'Contract Sent', color: 'orange' },
+      { name: 'Renewed Won', color: 'green' }
+    ]
+  },
+  {
+    id: 'pipe-partnerships',
+    name: 'Strategic Partnerships',
+    description: 'Manage integrations, co-selling, and affiliate partner channels.',
+    stages: [
+      { name: 'Prospect Partner', color: 'purple' },
+      { name: 'Partner Evaluation', color: 'blue' },
+      { name: 'Agreement Review', color: 'orange' },
+      { name: 'Active Alliance', color: 'green' }
+    ]
+  }
+];
 
 const CURRENCY_SYMBOLS = {
   USD: '$',

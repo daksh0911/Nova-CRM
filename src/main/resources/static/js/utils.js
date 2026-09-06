@@ -89,6 +89,8 @@ function saveLocalState() {
     localStorage.setItem('nova_currency', currentCurrency);
     if (typeof automationsList !== 'undefined') localStorage.setItem('nova_automations', JSON.stringify(automationsList));
     if (typeof inboxFeed !== 'undefined') localStorage.setItem('nova_inbox', JSON.stringify(inboxFeed));
+    if (typeof pipelines !== 'undefined') localStorage.setItem('nova_pipelines', JSON.stringify(pipelines));
+    if (typeof activePipelineId !== 'undefined') localStorage.setItem('nova_active_pipeline', activePipelineId);
   } catch (e) {}
 }
 
@@ -102,6 +104,8 @@ function loadLocalState() {
     const curr = localStorage.getItem('nova_currency');
     const auto = localStorage.getItem('nova_automations');
     const inb = localStorage.getItem('nova_inbox');
+    const pipes = localStorage.getItem('nova_pipelines');
+    const activePipe = localStorage.getItem('nova_active_pipeline');
 
     if (c) {
       const storedClients = JSON.parse(c);
@@ -133,6 +137,13 @@ function loadLocalState() {
     if (inb && typeof inboxFeed !== 'undefined') {
       const storedInb = JSON.parse(inb);
       if (Array.isArray(storedInb)) inboxFeed = storedInb;
+    }
+    if (pipes && typeof pipelines !== 'undefined') {
+      const storedPipes = JSON.parse(pipes);
+      if (Array.isArray(storedPipes) && storedPipes.length > 0) pipelines = storedPipes;
+    }
+    if (activePipe && typeof activePipelineId !== 'undefined') {
+      activePipelineId = activePipe;
     }
   } catch (e) {}
 }
