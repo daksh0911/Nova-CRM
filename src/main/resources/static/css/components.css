@@ -674,37 +674,36 @@ input:checked + .slider { background-color: var(--accent); }
 input:checked + .slider:before { transform: translateX(20px); }
 
 /* ── Mobile Components Rules ── */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .hero {
-    padding: 16px 14px;
-    border-radius: 14px;
-    margin-bottom: 14px;
-    gap: 12px !important;
+    padding: 14px 12px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    gap: 8px !important;
   }
   .hero h1 {
-    font-size: 20px;
+    font-size: 19px;
     line-height: 1.25;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }
   .hero-sub {
-    font-size: 12px;
+    font-size: 11.5px;
   }
   .hero-badge {
-    font-size: 11px;
-    padding: 3px 10px;
-    margin-bottom: 8px;
+    font-size: 10px;
+    padding: 2px 8px;
+    margin-bottom: 6px;
   }
+  /* Mobile clutter reduction: hide redundant clock badge */
   .dashboard-live-clock-badge {
-    padding: 4px 10px;
-    font-size: 11px;
-    gap: 6px;
+    display: none !important;
   }
 
   .kpi-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 8px !important;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
   .kpi-card {
     padding: 12px 10px;
@@ -727,21 +726,9 @@ input:checked + .slider:before { transform: translateX(20px); }
     font-size: 10.5px;
   }
 
+  /* Mobile clutter reduction: hide secondary 30-day forecast, conversion, velocity cards */
   .intel-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
-    margin-bottom: 14px;
-  }
-  .intel-card {
-    padding: 10px 8px;
-    border-radius: 10px;
-  }
-  .intel-label {
-    font-size: 9.5px;
-  }
-  .intel-value {
-    font-size: 16px;
+    display: none !important;
   }
 
   .actions-strip {
@@ -785,42 +772,14 @@ input:checked + .slider:before { transform: translateX(20px); }
     overflow: hidden !important;
     margin-bottom: 0 !important;
   }
-  .forecast-grid, .tasks-layout {
+  /* Mobile clutter reduction: hide heavy quarterly forecast & executive telemetry gauges */
+  .forecast-grid {
+    display: none !important;
+  }
+  .tasks-layout {
     grid-template-columns: 1fr !important;
     gap: 12px;
     margin-bottom: 14px;
-  }
-  .forecast-stats {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 6px !important;
-    text-align: center;
-    margin: 12px 0;
-  }
-  .forecast-label {
-    font-size: 9px;
-  }
-  .forecast-target, .forecast-actual, .forecast-gap {
-    font-size: 14px;
-  }
-  .gauges-flex {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-around !important;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 0;
-  }
-  .gauge-circle-wrap {
-    width: 58px;
-    height: 58px;
-    margin-bottom: 4px;
-  }
-  .gauge-val {
-    font-size: 12px;
-  }
-  .gauge-title {
-    font-size: 10px;
   }
 
   /* List rows: Top Deals, Recent Activity, Leaderboard - no going out */
